@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Bảng chấm công</title>
+
+  <style>
+    :root{
+      --green:#3399FF;
+      --green-dark:#3399FF;
+      --green-soft:#e7f7ef;
+      --bg:#f3f5f7;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --card:#ffffff;
+      --line:#e5e7eb;
+
+      --shadow: 0 8px 24px rgba(16, 24, 40, 0.08);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text);}
+
+    .app{display:flex;min-height:100vh;}
+    .sidebar{
+      width:250px;background:#fff;border-right:1px solid var(--line);
+      position:sticky;top:0;height:100vh;overflow:auto;
+    }
+    .brand{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);}
+    .logo{
+      width:44px;height:44px;border-radius:10px;
+      background:linear-gradient(135deg,var(--green),#22c55e);
+      color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;
+      box-shadow:0 6px 16px rgba(10,163,92,.25);
+    }
+    .brand h1{font-size:14px;margin:0;line-height:1.2;}
+    .brand small{color:var(--muted)}
+
+    .side-group{padding:10px 10px 14px;}
+    .side-title{
+      font-size:12px;color:var(--muted);padding:8px 10px;
+      text-transform:uppercase;letter-spacing:.5px;
+    }
+    .side-item{
+      display:flex;align-items:center;gap:10px;
+      padding:10px 12px;border-radius:10px;cursor:pointer;
+      color:#111827;font-size:13px;margin:4px 6px;
+    }
+    .side-item:hover{background:#f6f7f9;}
+    .side-item.active{background:var(--green);color:#fff;}
+    .side-item .dot{width:8px;height:8px;border-radius:99px;background:#cbd5e1;}
+    .side-item.active .dot{background:#fff}
+
+    .main{flex:1;display:flex;flex-direction:column;min-width:0;}
+    .topbar{
+      background:var(--green);color:#fff;padding:10px 16px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      position:sticky;top:0;z-index:10;box-shadow:0 2px 10px rgba(0,0,0,.08);
+    }
+    .crumb{display:flex;align-items:center;gap:10px;font-weight:700;white-space:nowrap;}
+    .crumb .back{
+      width:28px;height:28px;border-radius:8px;border:1px solid rgba(255,255,255,.35);
+      background:rgba(255,255,255,.12);color:#fff;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;font-weight:700;
+    }
+    .top-right{display:flex;align-items:center;gap:10px;}
+    .top-btn{
+      border:1px solid rgba(255,255,255,.35);
+      background:rgba(255,255,255,.12);
+      color:#fff;padding:8px 12px;border-radius:10px;cursor:pointer;
+      font-size:12px;font-weight:700;white-space:nowrap;
+    }
+    .top-btn.primary{background:#fff;color:var(--green-dark);border-color:#fff;}
+    .user{
+      display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;
+      background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+      font-size:12px;white-space:nowrap;
+    }
+    .avatar{
+      width:26px;height:26px;border-radius:99px;background:#fff;color:var(--green-dark);
+      display:flex;align-items:center;justify-content:center;font-weight:800;
+    }
+
+    .page{padding:16px;max-width:1320px;width:100%;margin:0 auto;}
+
+    .filter-bar{
+      background:var(--card);border:1px solid var(--line);border-radius:14px;
+      padding:14px;box-shadow:var(--shadow);
+    }
+    .filter-row{display:flex;flex-wrap:wrap;gap:10px 12px;align-items:end;}
+    .field{display:flex;flex-direction:column;gap:6px;min-width:260px;flex:0 0 auto;}
+    .field label{font-size:12px;color:var(--muted);font-weight:700;}
+    .input{
+      width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+      font-size:13px;outline:none;background:#fff;
+    }
+    .input:focus{border-color:rgba(10,163,92,.5);box-shadow:0 0 0 3px rgba(10,163,92,.12);}
+    .btn{
+      border:none;border-radius:10px;padding:10px 14px;font-size:13px;cursor:pointer;
+      font-weight:800;display:inline-flex;gap:8px;align-items:center;justify-content:center;white-space:nowrap;
+    }
+    .btn.search{background:#2563eb;color:#fff;}
+    .btn.search:hover{background:#1d4ed8}
+    .btn.ghost{background:#eef2ff;color:#1d4ed8;}
+    .btn.ghost:hover{background:#e0e7ff}
+    .btn.save{background:var(--green);color:#fff;}
+    .btn.save:hover{background:var(--green-dark);}
+    .btn.danger{background:#ef4444;color:#fff;}
+    .btn.danger:hover{background:#dc2626}
+    .btn.secondary{background:#e5e7eb;color:#111827;}
+    .btn.secondary:hover{background:#d1d5db}
+
+    .meta{
+      margin-top:10px;display:flex;justify-content:flex-end;color:var(--muted);
+      font-size:12px;gap:20px;flex-wrap:wrap;
+    }
+
+    .tabs{margin-top:14px;display:flex;gap:8px;align-items:flex-end;}
+    .tab{
+      border:1px solid var(--line);background:#fff;color:#111827;
+      padding:10px 14px;border-radius:12px 12px 0 0;cursor:pointer;
+      font-weight:800;font-size:13px;
+    }
+    .tab.active{
+      border-color:rgba(10,163,92,.35);background:var(--green-soft);color:var(--green-dark);
+      box-shadow:0 -6px 18px rgba(10,163,92,.12);
+    }
+    .panel{
+      border:1px solid var(--line);border-top:none;background:#fff;
+      border-radius:0 14px 14px 14px;box-shadow:var(--shadow);overflow:hidden;
+    }
+    .hide{display:none !important;}
+
+    .calendar-head{
+      display:grid;grid-template-columns:repeat(7,1fr);
+      background:#f8fafc;border-bottom:1px solid var(--line);
+    }
+    .calendar-head div{
+      padding:10px 12px;text-align:center;font-size:12px;font-weight:800;color:#374151;
+      border-right:1px solid var(--line);
+    }
+    .calendar-head div:last-child{border-right:none;}
+    .calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:0;}
+
+    .day{
+      min-height:120px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+      padding:10px 10px 8px;position:relative;background:#fff;cursor:pointer;
+      transition: background .15s;
+    }
+    .day:hover{background:#f8fafc;}
+    .day:nth-child(7n){border-right:none;}
+    .day .dnum{position:absolute;top:8px;left:8px;font-size:12px;font-weight:800;color:#111827;}
+    .day.muted{background:#fbfbfc;color:#9ca3af;cursor:default;}
+    .day.muted:hover{background:#fbfbfc;}
+    .badge-today{
+      position:absolute;top:7px;left:38px;background:var(--green);color:#fff;font-size:11px;
+      font-weight:800;padding:2px 8px;border-radius:999px;
+    }
+    .shift{margin-top:18px;display:flex;flex-direction:column;gap:6px;font-size:12px;}
+    .shift .row{display:flex;align-items:center;justify-content:space-between;gap:10px;color:#111827;}
+    .sun{display:inline-flex;align-items:center;gap:6px;font-weight:800;}
+    .sun::before{content:"☀️";font-size:13px;}
+    .muted-text{color:var(--muted);font-weight:700;}
+    .status{
+      display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;margin-top:4px;color:#f97316;
+    }
+    .status.ok{color:#10b981;}
+    .status::before{content:"⏺";font-size:10px;}
+
+    .summary-wrap{padding:14px;}
+    .cards{display:grid;grid-template-columns:repeat(5,minmax(160px,1fr));gap:12px;}
+    .s-card{
+      border:2px solid #e5e7eb;border-radius:14px;background:#fff;padding:12px 12px;text-align:center;
+    }
+    .s-card .label{font-size:13px;font-weight:800;color:#111827;}
+    .s-card .val{margin-top:8px;font-size:22px;font-weight:900;}
+    .s-card.green{border-color:#86efac;}
+    .s-card.green .val{color:var(--green-dark);}
+    .s-card.blue{border-color:#93c5fd;}
+    .s-card.blue .val{color:#2563eb;}
+    .s-card.orange{border-color:#fdba74;}
+    .s-card.orange .val{color:#ea580c;}
+    .s-card.red{border-color:#fca5a5;}
+    .s-card.red .val{color:#dc2626;}
+
+    .table-box{margin-top:12px;border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+    table{width:100%;border-collapse:collapse;font-size:13px;}
+    thead th{
+      background:#f8fafc;border-bottom:1px solid var(--line);
+      padding:10px 10px;text-align:center;font-size:12px;color:#374151;
+      text-transform:uppercase;letter-spacing:.4px;
+    }
+    tbody td{border-bottom:1px solid var(--line);padding:10px 10px;text-align:center;}
+    tbody tr:nth-child(even){background:#fafafa;}
+    td.left, th.left{text-align:left;}
+    .pill{
+      display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;
+      font-size:12px;font-weight:800;background:#f3f4f6;color:#111827;
+    }
+    .pill.green{background:var(--green-soft);color:var(--green-dark);}
+
+    .error-banner{
+      margin-top:10px;
+      background:#fff;
+      border:1px solid #fecaca;
+      color:#b91c1c;
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:13px;
+      display:none;
+    }
+
+    /* ===== Modal ===== */
+    .modal-backdrop{
+      position:fixed;inset:0;background:rgba(0,0,0,.35);
+      display:none;align-items:center;justify-content:center;z-index:999;
+      padding:14px;
+    }
+    .modal{
+      width:min(720px, 100%);
+      background:#fff;border-radius:16px;box-shadow:0 18px 50px rgba(0,0,0,.25);
+      overflow:hidden;border:1px solid rgba(0,0,0,.08);
+    }
+    .modal-head{
+      padding:12px 14px;background:#f8fafc;border-bottom:1px solid var(--line);
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+    }
+    .modal-title{font-weight:900;font-size:14px;}
+    .modal-close{
+      width:34px;height:34px;border-radius:10px;border:1px solid var(--line);
+      background:#fff;cursor:pointer;font-weight:900;
+    }
+    .modal-body{padding:14px;}
+    .mgrid{
+      display:grid;grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:10px 12px;
+    }
+    .mfield{display:flex;flex-direction:column;gap:6px;}
+    .mfield label{font-size:12px;color:var(--muted);font-weight:800;}
+    .row-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap;}
+    .help{
+      margin-top:10px;font-size:12px;color:var(--muted);line-height:1.4;
+      background:#f8fafc;border:1px dashed var(--line);padding:10px;border-radius:12px;
+    }
+    .mini{
+      font-size:12px;color:var(--muted);font-weight:800;
+    }
+
+    @media (max-width:1100px){
+      .cards{grid-template-columns:repeat(2,minmax(160px,1fr));}
+      .field{min-width:220px;}
+    }
+    @media (max-width:860px){
+      .sidebar{display:none;}
+      .page{padding:12px;}
+      .day{min-height:110px;}
+      .mgrid{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">ABC</div>
+        <div>
+          <h1>ABC<br><small>Quản lý nhân sự</small></h1>
+        </div>
+      </div>
+
+      <div class="side-group">
+        <div class="side-title">Đề xuất</div>
+        <div class="side-item"><span class="dot"></span> Nghỉ phép</div>
+        <div class="side-item"><span class="dot"></span> Làm thêm giờ (OT)</div>
+        <div class="side-item"><span class="dot"></span> Giải trình công</div>
+
+        <div class="side-title">Chấm công</div>
+        <div class="side-item active"><span class="dot"></span> Bảng công</div>
+        <div class="side-item"><span class="dot"></span> Lịch làm việc</div>
+        <div class="side-item"><span class="dot"></span> Phép năm</div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <div class="topbar">
+        <div class="crumb">
+          <button class="back" type="button" title="Quay lại">‹</button>
+          <div>Bảng công</div>
+        </div>
+
+        <div class="top-right">
+          <button class="top-btn" type="button">Đăng ký OT</button>
+          <button class="top-btn" type="button">Đăng ký nghỉ</button>
+          <button class="top-btn primary" type="button">Giải trình công</button>
+          <div class="user">
+            <div class="avatar">N</div>
+            <div>Nguyễn Việt Thắng</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page">
+        <div class="filter-bar">
+          <div class="filter-row">
+            <div class="field">
+              <label>Kỳ công</label>
+              <input class="input" id="kyCong" type="text" value="01/2026 (23/12 - 22/01)" />
+            </div>
+
+            <div class="field" style="min-width:220px">
+              <label>Mã nhân viên</label>
+              <input class="input" id="maNvInput" type="text" value="NV001" />
+            </div>
+
+            <div class="field" style="min-width:180px">
+              <label>&nbsp;</label>
+              <button class="btn search" type="button" id="btnSearch">🔎 Tìm kiếm</button>
+            </div>
+
+            <div class="field" style="min-width:180px">
+              <label>&nbsp;</label>
+              <button class="btn ghost" type="button" id="btnToday">📅 Về hôm nay</button>
+            </div>
+          </div>
+
+          <div class="meta">
+            <div id="updatedAt">Dữ liệu được cập nhật lúc: --:-- - --/--/----</div>
+            <div id="nextUpdate">Lần cập nhật tiếp theo lúc: --:-- - --/--/----</div>
+          </div>
+
+          <div class="error-banner" id="errBox"></div>
+        </div>
+
+        <div class="tabs">
+          <button class="tab active" id="tabChamCong" type="button">Chấm công</button>
+          <button class="tab" id="tabBangCong" type="button">Bảng công</button>
+        </div>
+
+        <!-- Chấm công -->
+        <section class="panel" id="panelChamCong">
+          <div class="calendar-head">
+            <div>Thứ 2</div><div>Thứ 3</div><div>Thứ 4</div><div>Thứ 5</div><div>Thứ 6</div><div>Thứ 7</div><div>Chủ nhật</div>
+          </div>
+          <div class="calendar-grid" id="calendarGrid"></div>
+        </section>
+
+        <!-- Bảng công -->
+        <section class="panel hide" id="panelBangCong">
+          <div class="summary-wrap">
+            <div class="cards">
+              <div class="s-card green">
+                <div class="label">Tổng công</div>
+                <div class="val" id="sumTongCong">0</div>
+              </div>
+              <div class="s-card blue">
+                <div class="label">Công chuẩn</div>
+                <div class="val" id="sumCongChuan">27,25</div>
+              </div>
+              <div class="s-card orange">
+                <div class="label">Công tồn</div>
+                <div class="val" id="sumCongTon">--</div>
+              </div>
+              <div class="s-card green">
+                <div class="label">Phép khả dụng</div>
+                <div class="val" id="sumPhepKhaDung">0</div>
+              </div>
+              <div class="s-card red">
+                <div class="label">Phép đã dùng</div>
+                <div class="val" id="sumPhepDaDung">0</div>
+              </div>
+            </div>
+
+            <div class="table-box">
+              <table>
+                <thead>
+                  <tr>
+                    <th class="left">Thời gian</th>
+                    <th>Làm thêm - OT (giờ)</th>
+                    <th>Trực (công)</th>
+                    <th>Trực ca 3 (giờ)</th>
+                    <th>Nghỉ hưởng BHXH (công)</th>
+                    <th>Nghỉ hưởng lương (công)</th>
+                    <th>Nghỉ không lương (công)</th>
+                    <th>Nghỉ phép (giờ)</th>
+                    <th style="background:#d9f99d;">Công chuyên cần (giờ)</th>
+                    <th class="left">Ghi chú</th>
+                  </tr>
+                </thead>
+                <tbody id="summaryBody"></tbody>
+              </table>
+            </div>
+
+            <div class="help">
+              <div class="mini">Cách tính công (đang áp dụng trong file này):</div>
+              - Tổng giờ = (Giờ ra - Giờ vào)<br>
+              - Trừ giờ nghỉ trưa nếu giao nhau với 12:00–13:00<br>
+              - Công/ngày = Tổng giờ / 8 (chuẩn 8h/ngày)
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== Modal Sửa Chấm Công ===== -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <div class="modal-title" id="modalTitle">Sửa chấm công</div>
+        <button class="modal-close" type="button" id="btnCloseModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="mgrid">
+          <div class="mfield">
+            <label>Ngày</label>
+            <input class="input" id="mWorkDate" type="text" readonly />
+          </div>
+          <div class="mfield">
+            <label>Mã NV</label>
+            <input class="input" id="mMaNv" type="text" readonly />
+          </div>
+
+          <div class="mfield">
+            <label>Mã ca</label>
+            <input class="input" id="mShiftCode" type="text" placeholder="VD: HC1" />
+          </div>
+          <div class="mfield">
+            <label>Khung giờ ca</label>
+            <input class="input" id="mShiftTime" type="text" placeholder="VD: 09:00-18:00" />
+          </div>
+
+          <div class="mfield">
+            <label>Giờ vào</label>
+            <input class="input" id="mCheckIn" type="time" />
+          </div>
+          <div class="mfield">
+            <label>Giờ ra</label>
+            <input class="input" id="mCheckOut" type="time" />
+          </div>
+
+          <div class="mfield">
+            <label>Trạng thái giải trình</label>
+            <select class="input" id="mExplainStatus">
+              <option value="CHUA">Chưa giải trình công</option>
+              <option value="DA">Đã giải trình công</option>
+            </select>
+          </div>
+          
+          <div class="mfield">
+            <label>Ghi chú</label>
+            <input class="input" id="mNote" type="text" placeholder="VD: Đi muộn 10 phút..." />
+          </div>
+        </div>
+
+        <div class="row-actions">
+          <button class="btn secondary" type="button" id="btnCancel">Đóng</button>
+          <button class="btn danger" type="button" id="btnClearDay">Xóa ngày</button>
+          <button class="btn save" type="button" id="btnSaveDay">Lưu</button>
+        </div>
+
+        <div class="help" style="margin-top:12px">
+          <b>Mẹo:</b> Bỏ trống Giờ vào/ra rồi bấm Lưu để lưu “chưa chấm công”.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // ===================== CONFIG =====================
+  const API_URL = "http://localhost:3000/api";
+  // Map attendance theo workDate: "YYYY-MM-DD" -> row
+  let ATT_MAP = {};
+  // Current range
+  let CURRENT_RANGE = { from: "2025-12-23", to: "2026-01-22" };
+  // Current month view (hiển thị giống ảnh: 01/2026)
+  let VIEW_MONTH = 1;
+  let VIEW_YEAR = 2026;
+
+  // ===================== Tabs =====================
+  const tabChamCong = document.getElementById("tabChamCong");
+  const tabBangCong = document.getElementById("tabBangCong");
+  const panelChamCong = document.getElementById("panelChamCong");
+  const panelBangCong = document.getElementById("panelBangCong");
+
+  tabChamCong.addEventListener("click", () => switchTab("chamcong"));
+  tabBangCong.addEventListener("click", () => {
+    switchTab("bangcong");
+    renderSummary(); // đảm bảo bảng công luôn tính mới
+  });
+
+  function switchTab(which){
+    const isCham = which === "chamcong";
+    tabChamCong.classList.toggle("active", isCham);
+    tabBangCong.classList.toggle("active", !isCham);
+    panelChamCong.classList.toggle("hide", !isCham);
+    panelBangCong.classList.toggle("hide", isCham);
+  }
+
+  // ===================== Helpers =====================
+  function escapeHtml(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function setMeta(){
+    const now = new Date();
+    const pad = (n)=> String(n).padStart(2,"0");
+    const t = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    const d = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()}`;
+    document.getElementById("updatedAt").textContent = `Dữ liệu được cập nhật lúc: ${t} - ${d}`;
+
+    const next = new Date(now.getTime() + 3*60*60*1000);
+    const t2 = `${pad(next.getHours())}:${pad(next.getMinutes())}`;
+    const d2 = `${pad(next.getDate())}/${pad(next.getMonth()+1)}/${next.getFullYear()}`;
+    document.getElementById("nextUpdate").textContent = `Lần cập nhật tiếp theo lúc: ${t2} - ${d2}`;
+  }
+
+  function showError(msg){
+    const box = document.getElementById("errBox");
+    box.style.display = "block";
+    box.textContent = msg;
+  }
+  function clearError(){
+    const box = document.getElementById("errBox");
+    box.style.display = "none";
+    box.textContent = "";
+  }
+
+  // Demo theo ảnh: 23/12/2025 - 22/01/2026
+  function getRangeFromKyCong(){
+    return { from: "2025-12-23", to: "2026-01-22" };
+  }
+
+  function formatKey(date){
+    const y = date.getFullYear();
+    const m = String(date.getMonth()+1).padStart(2,"0");
+    const d = String(date.getDate()).padStart(2,"0");
+    return `${y}-${m}-${d}`;
+  }
+
+  function formatVNDate(yyyyMmDd){
+    const [y,m,d] = yyyyMmDd.split("-");
+    return `${d}/${m}/${y}`;
+  }
+
+  function parseTimeToMinutes(hhmm){
+    if(!hhmm || typeof hhmm !== "string") return null;
+    const [h,m] = hhmm.split(":").map(Number);
+    if(Number.isNaN(h) || Number.isNaN(m)) return null;
+    return h*60 + m;
+  }
+
+  function minutesToHours(min){
+    return min / 60;
+  }
+
+  // Trừ giờ nghỉ trưa 12:00-13:00 nếu giao nhau
+  function calcWorkingMinutes(checkIn, checkOut){
+    const inMin = parseTimeToMinutes(checkIn);
+    const outMin = parseTimeToMinutes(checkOut);
+    if(inMin === null || outMin === null) return 0;
+    if(outMin <= inMin) return 0;
+
+    let total = outMin - inMin;
+
+    // lunch overlap with [720, 780)
+    const lunchStart = 12*60, lunchEnd = 13*60;
+    const overlapStart = Math.max(inMin, lunchStart);
+    const overlapEnd = Math.min(outMin, lunchEnd);
+    const overlap = Math.max(0, overlapEnd - overlapStart);
+    total -= overlap;
+
+    return Math.max(0, total);
+  }
+
+  // ======= NEW: tính số phút yêu cầu của ca (cũng trừ trưa) =======
+  function calcShiftRequiredMinutes(shiftTime){
+    // shiftTime dạng "09:00-18:00"
+    if(!shiftTime || typeof shiftTime !== "string" || !shiftTime.includes("-")) return null;
+    const [s,e] = shiftTime.split("-").map(x => x.trim());
+    const start = parseTimeToMinutes(s);
+    const end = parseTimeToMinutes(e);
+    if(start === null || end === null) return null;
+    if(end <= start) return null;
+
+    // cũng trừ trưa y như giờ thực làm
+    let total = end - start;
+
+    const lunchStart = 12*60, lunchEnd = 13*60;
+    const overlapStart = Math.max(start, lunchStart);
+    const overlapEnd = Math.min(end, lunchEnd);
+    const overlap = Math.max(0, overlapEnd - overlapStart);
+    total -= overlap;
+
+    return Math.max(0, total);
+  }
+
+  // ======= NEW: đủ giờ => ẩn giải trình =======
+  function isFullWorked(attRow){
+    // attRow dạng: { shiftTime, checkIn, checkOut, ... } trong ATT_MAP
+    if(!attRow) return false;
+
+    const inV = attRow.checkIn && !attRow.checkIn.includes("--") ? attRow.checkIn : null;
+    const outV = attRow.checkOut && !attRow.checkOut.includes("--") ? attRow.checkOut : null;
+    if(!inV || !outV) return false;
+
+    const worked = calcWorkingMinutes(inV, outV);
+    const required = calcShiftRequiredMinutes(attRow.shiftTime || "09:00-18:00");
+
+    // Nếu không parse được shiftTime thì chỉ cần có vào/ra là coi như đủ
+    if(required === null) return true;
+
+    return worked >= required;
+  }
+
+  function round3(x){
+    return Math.round(x * 1000) / 1000;
+  }
+
+  function formatNumberVN(x){
+    // hiện dạng 17,406 như ảnh
+    const s = String(x);
+    return s.replace(".", ",");
+  }
+
+  // ===================== Calendar Builder =====================
+  function buildCalendar(month, year){
+    VIEW_MONTH = month;
+    VIEW_YEAR = year;
+
+    const grid = document.getElementById("calendarGrid");
+    grid.innerHTML = "";
+
+    const first = new Date(year, month-1, 1);
+    const last = new Date(year, month, 0);
+
+    const dayIndexMonStart = (date) => {
+      const d = date.getDay(); // 0 Sun..6 Sat
+      return (d === 0) ? 6 : d - 1; // Mon=0..Sun=6
+    };
+
+    const startOffset = dayIndexMonStart(first);
+    const totalDays = last.getDate();
+    const prevLast = new Date(year, month-1, 0).getDate();
+    const totalCells = 42;
+
+    const todayKey = formatKey(new Date());
+
+    for(let i=0;i<totalCells;i++){
+      const cell = document.createElement("div");
+      cell.className = "day";
+
+      let dayNum, curMonth = month, curYear = year;
+      let isMuted = false;
+
+      if(i < startOffset){
+        isMuted = true;
+        dayNum = prevLast - (startOffset - 1 - i);
+        const prev = new Date(year, month-2, dayNum);
+        curMonth = prev.getMonth()+1;
+        curYear = prev.getFullYear();
+      }else if(i >= startOffset + totalDays){
+        isMuted = true;
+        dayNum = (i - (startOffset + totalDays)) + 1;
+        const next = new Date(year, month, dayNum);
+        curMonth = next.getMonth()+1;
+        curYear = next.getFullYear();
+      }else{
+        dayNum = (i - startOffset) + 1;
+      }
+
+      if(isMuted) cell.classList.add("muted");
+
+      const dateKey = `${curYear}-${String(curMonth).padStart(2,"0")}-${String(dayNum).padStart(2,"0")}`;
+
+      cell.innerHTML = `<div class="dnum">${dayNum}</div>`;
+
+      if(dateKey === todayKey){
+        const b = document.createElement("div");
+        b.className = "badge-today";
+        b.textContent = "Hôm nay";
+        cell.appendChild(b);
+      }
+
+      const r = ATT_MAP[dateKey];
+      if(r){
+        const box = document.createElement("div");
+        box.className = "shift";
+
+        const shiftCode = r.shiftCode || "HC1";
+        const shiftTime = (r.shiftTime || "09:00-18:00").replace("-", " - ");
+        const inV = r.checkIn || "--:--";
+        const outV = r.checkOut || "--:--";
+
+        // ======= NEW: chỉ hiện giải trình khi CHƯA đủ giờ =======
+        const showExplain = !isFullWorked(r);
+
+        box.innerHTML = `
+          <div class="row">
+            <div class="sun">
+              ${escapeHtml(shiftCode)}
+              <span class="muted-text">(${escapeHtml(shiftTime)})</span>
+            </div>
+          </div>
+          <div class="row">
+            <div><span class="muted-text">Vào:</span> <b style="color:${inV.includes("--")? "#ef4444":"#111827"}">${escapeHtml(inV)}</b></div>
+            <div><span class="muted-text">Ra:</span> <b style="color:${outV.includes("--")? "#ef4444":"#111827"}">${escapeHtml(outV)}</b></div>
+          </div>
+          ${
+            showExplain
+              ? (r.explainStatus === "DA"
+                  ? `<div class="status ok">Đã giải trình công</div>`
+                  : `<div class="status">Chưa giải trình công</div>`
+                )
+              : ``
+          }
+        `;
+        cell.appendChild(box);
+      }
+
+      // Click open modal (only for non-muted)
+      if(!isMuted){
+        cell.addEventListener("click", () => openModal(dateKey));
+      }
+
+      grid.appendChild(cell);
+    }
+  }
+
+  // ===================== Modal logic =====================
+  const modalBackdrop = document.getElementById("modalBackdrop");
+  const btnCloseModal = document.getElementById("btnCloseModal");
+  const btnCancel = document.getElementById("btnCancel");
+  const btnSaveDay = document.getElementById("btnSaveDay");
+  const btnClearDay = document.getElementById("btnClearDay");
+
+  const mWorkDate = document.getElementById("mWorkDate");
+  const mMaNv = document.getElementById("mMaNv");
+  const mShiftCode = document.getElementById("mShiftCode");
+  const mShiftTime = document.getElementById("mShiftTime");
+  const mCheckIn = document.getElementById("mCheckIn");
+  const mCheckOut = document.getElementById("mCheckOut");
+  const mExplainStatus = document.getElementById("mExplainStatus");
+  const mNote = document.getElementById("mNote");
+
+  let MODAL_DATE_KEY = null;
+
+  function openModal(dateKey){
+    clearError();
+    MODAL_DATE_KEY = dateKey;
+
+    const maNv = document.getElementById("maNvInput").value.trim() || "NV001";
+    const r = ATT_MAP[dateKey] || {};
+
+    document.getElementById("modalTitle").textContent = `Chấm công ngày ${formatVNDate(dateKey)}`;
+    mWorkDate.value = dateKey;
+    mMaNv.value = maNv;
+
+    mShiftCode.value = r.shiftCode || "HC1";
+    mShiftTime.value = r.shiftTime || "09:00-18:00";
+
+    // input type=time -> cần HH:MM
+    mCheckIn.value = (r.checkIn && r.checkIn.includes(":") && !r.checkIn.includes("--")) ? r.checkIn : "";
+    mCheckOut.value = (r.checkOut && r.checkOut.includes(":") && !r.checkOut.includes("--")) ? r.checkOut : "";
+
+    mExplainStatus.value = r.explainStatus || "CHUA";
+    mNote.value = r.note || "";
+
+    // ======= NEW: nếu đủ giờ => khóa chọn giải trình và set CHUA (hoặc giữ nguyên) =======
+    // Bạn muốn: đủ giờ thì không cần giải trình => mình disable luôn để tránh nhập nhầm
+    const tempRow = {
+      shiftTime: mShiftTime.value,
+      checkIn: mCheckIn.value || "--:--",
+      checkOut: mCheckOut.value || "--:--",
+      explainStatus: mExplainStatus.value
+    };
+    const full = isFullWorked(tempRow);
+    if(full){
+      mExplainStatus.value = "CHUA";
+      mExplainStatus.disabled = true;
+    }else{
+      mExplainStatus.disabled = false;
+    }
+
+    modalBackdrop.style.display = "flex";
+  }
+
+  // Khi user đổi giờ/ca trong modal => cập nhật disable giải trình realtime
+  function refreshExplainLock(){
+    const tempRow = {
+      shiftTime: mShiftTime.value,
+      checkIn: mCheckIn.value || "--:--",
+      checkOut: mCheckOut.value || "--:--",
+      explainStatus: mExplainStatus.value
+    };
+    const full = isFullWorked(tempRow);
+    if(full){
+      mExplainStatus.value = "CHUA";
+      mExplainStatus.disabled = true;
+    }else{
+      mExplainStatus.disabled = false;
+    }
+  }
+  mShiftTime.addEventListener("input", refreshExplainLock);
+  mCheckIn.addEventListener("input", refreshExplainLock);
+  mCheckOut.addEventListener("input", refreshExplainLock);
+
+  function closeModal(){
+    modalBackdrop.style.display = "none";
+    MODAL_DATE_KEY = null;
+  }
+
+  btnCloseModal.addEventListener("click", closeModal);
+  btnCancel.addEventListener("click", closeModal);
+  modalBackdrop.addEventListener("click", (e)=>{
+    if(e.target === modalBackdrop) closeModal();
+  });
+
+  btnSaveDay.addEventListener("click", async ()=>{
+    if(!MODAL_DATE_KEY) return;
+
+    // ======= NEW: nếu đủ giờ => auto set explainStatus = CHUA (vì không cần giải trình) =======
+    const tempRow = {
+      shiftTime: mShiftTime.value.trim() || "09:00-18:00",
+      checkIn: mCheckIn.value ? mCheckIn.value : "--:--",
+      checkOut: mCheckOut.value ? mCheckOut.value : "--:--"
+    };
+    const full = isFullWorked(tempRow);
+
+    const payload = {
+      maNv: mMaNv.value.trim(),
+      workDate: mWorkDate.value,
+      shiftCode: mShiftCode.value.trim() || null,
+      shiftTime: mShiftTime.value.trim() || null,
+      checkIn: mCheckIn.value || null,
+      checkOut: mCheckOut.value || null,
+      explainStatus: full ? "CHUA" : (mExplainStatus.value || "CHUA"),
+      note: mNote.value.trim() || null
+    };
+
+    // validate time if both exist
+    if(payload.checkIn && payload.checkOut){
+      const inMin = parseTimeToMinutes(payload.checkIn);
+      const outMin = parseTimeToMinutes(payload.checkOut);
+      if(outMin <= inMin){
+        alert("Giờ ra phải lớn hơn giờ vào.");
+        return;
+      }
+    }
+
+    try{
+      const res = await fetch(`${API_URL}/attendance`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify(payload)
+      });
+      const json = await res.json();
+      if(!json.success){
+        alert(json.error || "Lưu thất bại");
+        return;
+      }
+
+      // cập nhật local map (để UI đổi ngay)
+      ATT_MAP[payload.workDate] = {
+        shiftCode: payload.shiftCode || "HC1",
+        shiftTime: payload.shiftTime || "09:00-18:00",
+        checkIn: payload.checkIn ? payload.checkIn : "--:--",
+        checkOut: payload.checkOut ? payload.checkOut : "--:--",
+        explainStatus: payload.explainStatus || "CHUA",
+        note: payload.note || ""
+      };
+
+      buildCalendar(VIEW_MONTH, VIEW_YEAR);
+      renderSummary();
+      closeModal();
+    }catch(err){
+      console.error(err);
+      alert("Không thể kết nối server. Hãy kiểm tra server.js đang chạy.");
+    }
+  });
+
+  btnClearDay.addEventListener("click", async ()=>{
+    if(!MODAL_DATE_KEY) return;
+    const dateKey = MODAL_DATE_KEY;
+    const maNv = mMaNv.value.trim();
+
+    if(!confirm(`Bạn chắc chắn muốn xóa chấm công ngày ${formatVNDate(dateKey)}?`)) return;
+
+    // Cách xóa: cần biết id để DELETE /api/attendance/:id
+    try{
+      const { from, to } = CURRENT_RANGE;
+      const attRes = await fetch(`${API_URL}/attendance?maNv=${encodeURIComponent(maNv)}&from=${from}&to=${to}`);
+      const attJson = await attRes.json();
+      if(!attJson.success){
+        alert(attJson.error || "Không tải được dữ liệu để xóa");
+        return;
+      }
+      const row = attJson.data.find(r => r.workDate === dateKey);
+      if(!row){
+        delete ATT_MAP[dateKey];
+        buildCalendar(VIEW_MONTH, VIEW_YEAR);
+        renderSummary();
+        closeModal();
+        return;
+      }
+
+      const delRes = await fetch(`${API_URL}/attendance/${row.id}`, { method:"DELETE" });
+      const delJson = await delRes.json();
+      if(!delJson.success){
+        alert(delJson.error || "Xóa thất bại");
+        return;
+      }
+
+      delete ATT_MAP[dateKey];
+      buildCalendar(VIEW_MONTH, VIEW_YEAR);
+      renderSummary();
+      closeModal();
+    }catch(err){
+      console.error(err);
+      alert("Không thể kết nối server để xóa.");
+    }
+  });
+
+  // ===================== Summary (tự tính giờ thật) =====================
+  function buildDateRange(from, to){
+    const dates = [];
+    const s = new Date(from + "T00:00:00");
+    const e = new Date(to + "T00:00:00");
+    for(let d = new Date(s); d <= e; d.setDate(d.getDate()+1)){
+      dates.push(formatKey(d));
+    }
+    return dates;
+  }
+
+  function dayLabel(dateKey){
+    const d = new Date(dateKey + "T00:00:00");
+    const dow = d.getDay(); // 0 CN..6 T7
+    const dayNum = d.getDate();
+    return (dow === 0) ? `CN - ${dayNum}` : `T${dow+1} - ${dayNum}`;
+  }
+
+  function renderSummary(){
+    const { from, to } = CURRENT_RANGE;
+    const dates = buildDateRange(from, to);
+
+    let totalHours = 0;
+
+    const rows = dates.map(dateKey=>{
+      const r = ATT_MAP[dateKey];
+      const cccMin = r ? calcWorkingMinutes(
+        (r.checkIn && !r.checkIn.includes("--")) ? r.checkIn : null,
+        (r.checkOut && !r.checkOut.includes("--")) ? r.checkOut : null
+      ) : 0;
+
+      const cccHours = round3(minutesToHours(cccMin));
+      if(cccHours > 0) totalHours += cccHours;
+
+      return {
+        time: dayLabel(dateKey),
+        ot: "-",
+        truc: "-",
+        ca3: "-",
+        bhxh: "-",
+        hl: "-",
+        khl: "-",
+        phep: "-",
+        ccc: (cccHours > 0 ? cccHours : "-"),
+        note: r?.note || ""
+      };
+    });
+
+    const totalWorkDays = round3(totalHours / 8); // 8h = 1 công
+    document.getElementById("sumTongCong").textContent = formatNumberVN(totalWorkDays);
+
+    // render table
+    const tb = document.getElementById("summaryBody");
+    tb.innerHTML = [
+      `
+      <tr>
+        <td class="left"><b>Tổng</b></td>
+        <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+        <td><span class="pill green">${escapeHtml(String(round3(totalHours)))}</span></td>
+        <td class="left"></td>
+      </tr>
+      `,
+      ...rows.map(r => `
+        <tr>
+          <td class="left"><b>${escapeHtml(r.time)}</b></td>
+          <td>${escapeHtml(r.ot)}</td>
+          <td>${escapeHtml(r.truc)}</td>
+          <td>${escapeHtml(r.ca3)}</td>
+          <td>${escapeHtml(r.bhxh)}</td>
+          <td>${escapeHtml(r.hl)}</td>
+          <td>${escapeHtml(r.khl)}</td>
+          <td>${escapeHtml(r.phep)}</td>
+          <td>${r.ccc === "-" ? "-" : `<span class="pill green">${escapeHtml(String(r.ccc))}</span>`}</td>
+          <td class="left">${escapeHtml(r.note || "")}</td>
+        </tr>
+      `)
+    ].join("");
+  }
+
+  // ===================== Load from API =====================
+  async function loadFromServer(){
+    clearError();
+    setMeta();
+
+    const maNv = document.getElementById("maNvInput").value.trim() || "NV001";
+    CURRENT_RANGE = getRangeFromKyCong();
+
+    const { from, to } = CURRENT_RANGE;
+
+    try{
+      const attRes = await fetch(`${API_URL}/attendance?maNv=${encodeURIComponent(maNv)}&from=${from}&to=${to}`);
+      const attJson = await attRes.json();
+
+      if(!attJson.success){
+        showError(attJson.error || "Lỗi tải dữ liệu chấm công");
+        return;
+      }
+
+      // map to calendar
+      ATT_MAP = {};
+      attJson.data.forEach(r=>{
+        ATT_MAP[r.workDate] = {
+          shiftCode: r.shiftCode || "HC1",
+          shiftTime: r.shiftTime || "09:00-18:00",
+          checkIn: r.checkIn || "--:--",
+          checkOut: r.checkOut || "--:--",
+          explainStatus: r.explainStatus || "CHUA",
+          note: r.note || ""
+        };
+      });
+
+      buildCalendar(1, 2026); // giống ảnh
+      renderSummary();
+    }catch(err){
+      console.error(err);
+      showError("Không thể kết nối server. Hãy chắc chắn node server.js đang chạy ở http://localhost:3000");
+    }
+  }
+
+  // ===================== Events =====================
+  document.getElementById("btnSearch").addEventListener("click", loadFromServer);
+  document.getElementById("btnToday").addEventListener("click", ()=>{
+    const now = new Date();
+    buildCalendar(now.getMonth()+1, now.getFullYear());
+  });
+
+  // init
+  loadFromServer();
+</script>
+
+</body>
+</html>

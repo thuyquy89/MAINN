@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Hồ sơ nhân viên</title>
+  <style>
+    :root {
+      --gov-green: #3399FF;
+      --gov-green-dark: #3399FF;
+      --gov-red: #3399CC;
+      --gov-gold: #f9a825;
+      --bg-page: #f4f6f7;
+      --text-main: #212121;
+
+      --employee-purple: #3399CC;
+      --employee-purple-dark: #3399CC;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: "Arial", sans-serif;
+      margin: 0;
+      background: var(--bg-page);
+      color: var(--text-main);
+    }
+
+    .top-bar { height: 6px; background: var(--gov-red); }
+
+    .page-wrapper {
+      max-width: 1100px;
+      margin: 24px auto 32px;
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 3px 14px rgba(0,0,0,0.12);
+      overflow: hidden;
+    }
+
+    .header-gov {
+      background: linear-gradient(90deg, var(--gov-green-dark), var(--gov-green));
+      color: #ffffff;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .gov-emblem {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 2px solid var(--gov-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 30% 30%, #ffffff, var(--gov-red));
+      font-weight: bold;
+      font-size: 26px;
+      color: #fff;
+      box-shadow: 0 0 0 2px rgba(0,0,0,0.2);
+    }
+
+    .gov-title-block { line-height: 1.3; }
+    .gov-title-top { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; }
+    .gov-title-main { font-size: 18px; font-weight: 700; }
+    .gov-title-sub { font-size: 13px; opacity: 0.9; }
+
+    .system-bar {
+      background: #eceff1;
+      padding: 8px 24px;
+      border-bottom: 1px solid #cfd8dc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .system-name {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gov-green-dark);
+      font-weight: 600;
+    }
+
+    .system-user { font-size: 12px; color: #546e7a; }
+    .system-user span { font-weight: 600; color: var(--gov-red); }
+
+    .nav-bar {
+      background: #ffffff;
+      border-bottom: 1px solid #cfd8dc;
+      padding: 0 24px;
+    }
+
+    .nav-list { list-style: none; margin: 0; padding: 0; display: flex; gap: 20px; }
+    .nav-item a {
+      display: block;
+      padding: 10px 0;
+      font-size: 13px;
+      text-decoration: none;
+      color: #455a64;
+      border-bottom: 3px solid transparent;
+    }
+    .nav-item a:hover { color: var(--gov-green-dark); border-bottom-color: #b0bec5; }
+    .nav-item a.active { color: var(--gov-green-dark); border-bottom-color: var(--gov-green); font-weight: 600; }
+
+    .module-header {
+      background: var(--employee-purple);
+      color: #fff;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .module-header-title { font-size: 20px; font-weight: 600; }
+    .module-header-tabs { display: flex; gap: 8px; margin-left: 30px; }
+    .module-tab {
+      padding: 6px 14px;
+      border-radius: 20px 20px 0 0;
+      background: transparent;
+      color: #f5f5f5;
+      font-size: 13px;
+      cursor: pointer;
+      border: none;
+    }
+    .module-tab.active {
+      background: #ffffff;
+      color: var(--employee-purple-dark);
+      box-shadow: 0 -2px 6px rgba(0,0,0,0.15);
+    }
+
+    .content { padding: 16px 24px 24px; }
+    .section-title { font-size: 18px; font-weight: 600; margin-bottom: 6px; color: var(--employee-purple-dark); }
+    .section-note { font-size: 12px; color: #757575; margin-bottom: 12px; }
+
+    .profile-layout { display: grid; grid-template-columns: 220px 1fr; gap: 16px; margin-top: 10px; }
+    .profile-sidebar { border-right: 1px solid #e0e0e0; padding-right: 12px; }
+
+    .sidebar-section-title {
+      font-size: 12px;
+      color: #9e9e9e;
+      text-transform: uppercase;
+      margin: 10px 0 4px;
+    }
+
+    .sidebar-list { list-style: none; padding-left: 0; margin: 0 0 10px; font-size: 13px; }
+    .sidebar-list li { padding: 4px 8px; border-radius: 3px; cursor: pointer; }
+    .sidebar-list li:hover { background: #e3f2fd; }
+    .sidebar-list li.active { background: #c5e1f5; font-weight: 600; }
+    .sidebar-list li .count { float: right; color: #607d8b; font-size: 11px; }
+
+    .profile-main-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .profile-main-header-left { font-size: 16px; font-weight: 600; display:flex; align-items:center; gap:10px; }
+
+    .btn {
+      border: none;
+      font-size: 13px;
+      padding: 6px 14px;
+      border-radius: 3px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background:#eceff1;
+      color:#37474f;
+    }
+    .btn:hover { background:#cfd8dc; }
+
+    .btn-create { background: #43a047; color: #fff; }
+    .btn-create:hover { background: #2e7d32; }
+    .btn-create-icon { font-size: 15px; }
+
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+
+    .employee-card {
+      display: flex;
+      background: #ffffff;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      cursor: pointer;
+      transition: transform .05s ease;
+    }
+    .employee-card:hover { transform: translateY(-1px); }
+
+    .employee-avatar {
+      width: 90px;
+      height: 100%;
+      background: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .employee-avatar img {
+      width: 80px;
+      height: 80px;
+      border-radius: 3px;
+      object-fit: cover;
+    }
+
+    .employee-info { flex: 1; padding: 8px 10px; position: relative; }
+    .employee-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+    .employee-position { font-size: 12px; color: #616161; margin-bottom: 4px; }
+    .employee-tags { font-size: 11px; color: #757575; margin-bottom: 6px; }
+    .employee-contact { font-size: 11px; color: #424242; line-height: 1.3; }
+
+    .status-dot { width: 10px; height: 10px; border-radius: 50%; position: absolute; top: 8px; right: 8px; }
+    .status-dot.green { background: #2e7d32; }
+    .status-dot.red { background: #c62828; }
+    .status-dot.orange { background: #fb8c00; }
+
+    .alert-icon {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid #c62828;
+      color: #c62828;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      background: #fff;
+    }
+
+    .card-footer-label { margin-top: 4px; font-size: 11px; color: #9e9e9e; }
+    .card-footer-label span.dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 4px; }
+
+    @media (max-width: 760px){
+      .profile-layout { grid-template-columns: 1fr; }
+      .profile-sidebar { border-right: none; padding-right: 0; border-bottom: 1px solid #e0e0e0; padding-bottom: 12px; }
+      .nav-list { flex-wrap: wrap; }
+    }
+
+    /* ===== MODAL SỬA/XÓA ===== */
+    .modal-backdrop{
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.35);
+      display:none;
+      align-items:center; justify-content:center;
+      padding: 16px;
+      z-index: 9999;
+    }
+    .modal{
+      width: min(760px, 100%);
+      background:#fff;
+      border-radius:8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      overflow:hidden;
+    }
+    .modal-header{
+      background:#eceff1;
+      padding:10px 14px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      border-bottom:1px solid #cfd8dc;
+    }
+    .modal-title{ font-size:14px; font-weight:700; color:#37474f; }
+    .modal-close{ border:none; background:transparent; cursor:pointer; font-size:18px; }
+    .modal-body{ padding: 12px 14px; }
+    .modal-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 14px;
+    }
+    .field{ display:flex; flex-direction:column; gap:4px; }
+    .field label{ font-size:12px; color:#455a64; }
+    .field input, .field select{
+      padding:6px 8px;
+      font-size:13px;
+      border:1px solid #b0bec5;
+      border-radius:4px;
+      background:#fff;
+    }
+    .modal-actions{
+      padding: 10px 14px 14px;
+      display:flex;
+      gap:8px;
+      justify-content:flex-end;
+      border-top: 1px solid #eceff1;
+    }
+    .btn-primary{ background:#3399ff; color:#fff; }
+    .btn-primary:hover{ background:#1e88e5; }
+    .btn-danger{ background:#e53935; color:#fff; }
+    .btn-danger:hover{ background:#c62828; }
+    .btn-ghost{ background:#eceff1; color:#37474f; }
+    .btn-ghost:hover{ background:#cfd8dc; }
+    .hint{ font-size:11px; color:#9e9e9e; margin-top:6px; }
+    .error{ font-size:12px; color:#e53935; margin-top:6px; display:none; }
+    @media(max-width: 760px){
+      .modal-grid{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="top-bar"></div>
+
+<div class="page-wrapper">
+
+  <div class="header-gov">
+    <div class="gov-emblem">ABC</div>
+    <div class="gov-title-block">
+      <div class="gov-title-top">Công ty trách nhiệm hữu hạn 1 thành viên</div>
+      <div class="gov-title-main">PHÒNG NỘI VỤ - CÔNG TY TNHH CÔNG NGHỆ ABC</div>
+      <div class="gov-title-sub">Hệ thống quản lý, theo dõi hồ sơ cán bộ, nhân viên</div>
+    </div>
+  </div>
+
+  <div class="system-bar">
+    <div class="system-name">Hệ thống quản lý nhân sự nội bộ</div>
+    <div class="system-user">Người dùng: <span>ADMIN_TEST</span></div>
+  </div>
+
+  <nav class="nav-bar">
+    <ul class="nav-list">
+      <li class="nav-item"><a href="nhansu.html">Quản lý nhân sự</a></li>
+      <li class="nav-item"><a href="phongban.html">Quản lý phòng ban</a></li>
+      <li class="nav-item"><a href="chamcong.html">Bảng chấm công</a></li>
+      <li class="nav-item"><a href="hosonhanvien.html" class="active">Hồ sơ nhân viên</a></li>
+      <li class="nav-item"><a href="ot.html">Làm thêm giờ(OT)</a></li>
+      <li class="nav-item"><a href="admin_it.html">Quản trị hệ thống</a></li>
+    </ul>
+  </nav>
+
+  <div class="module-header">
+    <div class="module-header-title">Nhân viên</div>
+    <div class="module-header-tabs">
+      <button class="module-tab active" type="button">Nhân viên</button>
+      <button class="module-tab" type="button" disabled>Hợp đồng</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="section-title">Danh sách hồ sơ nhân viên</div>
+    <div class="section-note">
+      Click vào 1 thẻ nhân viên để <b>Sửa / Xóa</b>. Dữ liệu lấy từ SQLite qua API <b>/api/employees</b>.
+    </div>
+
+    <div class="profile-layout">
+      <aside class="profile-sidebar">
+        <div class="sidebar-section-title">Phòng/Ban (lọc)</div>
+        <ul class="sidebar-list" id="deptList">
+          <li class="active" data-dept="">👥 All <span class="count" id="countAll">0</span></li>
+        </ul>
+
+        <div class="sidebar-section-title">Gợi ý</div>
+        <ul class="sidebar-list">
+          <li>Nhấn “Tải lại” để refresh</li>
+          <li>Nếu chưa có mã phòng ban (maPb) thì hiển thị “N/A”</li>
+        </ul>
+      </aside>
+
+      <main>
+        <div class="profile-main-header">
+          <div class="profile-main-header-left">
+            Nhân viên
+            <button class="btn" type="button" id="btnReload">⟳ Tải lại</button>
+          </div>
+          <button class="btn btn-create" type="button" onclick="alert('Muốn tạo nhân viên hãy vào trang Quản lý nhân sự (nhansu.html).')">
+            <span class="btn-create-icon">＋</span> Tạo
+          </button>
+        </div>
+
+        <div class="card-grid" id="cardGrid">
+          <div style="grid-column:1/-1;text-align:center;color:#9e9e9e;">Đang tải dữ liệu...</div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SỬA/XÓA -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Cập nhật hồ sơ</div>
+      <button class="modal-close" type="button" id="btnCloseModal">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="modal-grid">
+        <div class="field">
+          <label>Mã NV (maNv)</label>
+          <input id="f_maNv" type="text" placeholder="VD: NV001">
+        </div>
+        <div class="field">
+          <label>Họ tên (hoTen)</label>
+          <input id="f_hoTen" type="text" placeholder="Nhập họ tên">
+        </div>
+
+        <div class="field">
+          <label>Chức danh (chucDanh)</label>
+          <input id="f_chucDanh" type="text" placeholder="VD: Chuyên viên">
+        </div>
+        <div class="field">
+          <label>Mã phòng ban (maPb)</label>
+          <input id="f_maPb" type="text" placeholder="VD: IT, HCNS...">
+        </div>
+
+        <div class="field">
+          <label>Ngày sinh (ngaySinh)</label>
+          <input id="f_ngaySinh" type="date">
+        </div>
+        <div class="field">
+          <label>Giới tính (gioiTinh)</label>
+          <select id="f_gioiTinh">
+            <option value="">-- Chọn --</option>
+            <option value="Nam">Nam</option>
+            <option value="Nữ">Nữ</option>
+            <option value="Khác">Khác</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Hệ số lương (heSoLuong)</label>
+          <input id="f_heSoLuong" type="number" step="0.1" placeholder="VD: 3.2">
+        </div>
+        <div class="field">
+          <label>Trạng thái (trangThai)</label>
+          <select id="f_trangThai">
+            <option value="">-- Chọn --</option>
+            <option value="Dang lam viec">Đang làm việc</option>
+            <option value="Da khoa">Đã khóa</option>
+            <option value="Nghi viec">Nghỉ việc</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Email (email)</label>
+          <input id="f_email" type="email" placeholder="vd: a@abc.com">
+        </div>
+        <div class="field">
+          <label>Số điện thoại (soDienThoai)</label>
+          <input id="f_soDienThoai" type="text" placeholder="VD: 09xxxxxxxx">
+        </div>
+
+<div class="field" style="grid-column: 1 / -1;">
+  <label>Avatar (Upload ảnh)</label>
+  <input id="f_avatarFile" type="file" accept="image/*">
+  <div style="display:flex; gap:8px; margin-top:6px; align-items:center;">
+    <button class="btn btn-primary" type="button" id="btnUploadAvatar">Tải ảnh lên</button>
+    <div class="hint" id="uploadHint" style="margin:0;">
+      Chọn ảnh (PNG/JPG/WebP), tối đa 2MB.
+    </div>
+  </div>
+
+  <div style="margin-top:10px;">
+    <div class="hint">Hoặc dùng link trực tiếp:</div>
+    <input id="f_avatarUrl" type="text" placeholder="VD: https://.../avatar.jpg">
+  </div>
+</div>
+
+
+      <div class="error" id="modalError"></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-danger" type="button" id="btnDelete">Xóa</button>
+      <button class="btn btn-ghost" type="button" id="btnCancel">Hủy</button>
+      <button class="btn btn-primary" type="button" id="btnSave">Lưu</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API_URL = 'http://localhost:3000/api';
+
+  let allEmployees = [];
+  let currentDept = "";
+  let selectedEmployeeId = null;
+
+  // ===== Modal refs =====
+  const modalBackdrop = document.getElementById('modalBackdrop');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalError = document.getElementById('modalError');
+
+  const f_maNv = document.getElementById('f_maNv');
+  const f_hoTen = document.getElementById('f_hoTen');
+  const f_chucDanh = document.getElementById('f_chucDanh');
+  const f_maPb = document.getElementById('f_maPb');
+  const f_ngaySinh = document.getElementById('f_ngaySinh');
+  const f_gioiTinh = document.getElementById('f_gioiTinh');
+  const f_heSoLuong = document.getElementById('f_heSoLuong');
+  const f_trangThai = document.getElementById('f_trangThai');
+  const f_email = document.getElementById('f_email');
+  const f_soDienThoai = document.getElementById('f_soDienThoai');
+  const f_avatarFile = document.getElementById('f_avatarFile');
+  const btnUploadAvatar = document.getElementById('btnUploadAvatar');
+  const uploadHint = document.getElementById('uploadHint');
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+    btnUploadAvatar.addEventListener('click', handleUploadAvatar);
+    document.getElementById('btnReload').addEventListener('click', loadEmployees);
+    document.getElementById('btnCloseModal').addEventListener('click', closeModal);
+    document.getElementById('btnCancel').addEventListener('click', closeModal);
+    modalBackdrop.addEventListener('click', (e) => {
+      if (e.target === modalBackdrop) closeModal();
+    });
+
+    document.getElementById('btnSave').addEventListener('click', handleSave);
+    document.getElementById('btnDelete').addEventListener('click', handleDelete);
+
+    loadEmployees();
+  });
+
+  async function loadEmployees() {
+    const grid = document.getElementById('cardGrid');
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#9e9e9e;">Đang tải dữ liệu...</div>`;
+
+    try {
+      const res = await fetch(`${API_URL}/employees`);
+      const result = await res.json();
+
+      if (!result.success) {
+        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#e53935;">Lỗi tải dữ liệu</div>`;
+        return;
+      }
+
+      allEmployees = result.data || [];
+      renderDeptSidebar(allEmployees);
+      renderCards();
+    } catch (e) {
+      console.error(e);
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#e53935;">
+        Không thể kết nối server. Hãy chạy node server.js
+      </div>`;
+    }
+  }
+
+  function renderDeptSidebar(employees) {
+    const deptList = document.getElementById('deptList');
+    const countAll = document.getElementById('countAll');
+    countAll.textContent = employees.length;
+
+    const depts = [...new Set(employees.map(e => (e.maPb || 'N/A').trim()))]
+      .sort((a,b) => a.localeCompare(b, 'vi'));
+
+    const keepAll = deptList.querySelector('li[data-dept=""]');
+    deptList.innerHTML = "";
+    deptList.appendChild(keepAll);
+
+    depts.forEach(d => {
+      const li = document.createElement('li');
+      li.dataset.dept = d;
+      li.innerHTML = `${escapeHtml(d)} <span class="count">${employees.filter(e => ((e.maPb||'N/A').trim()===d)).length}</span>`;
+      deptList.appendChild(li);
+    });
+
+    [...deptList.querySelectorAll('li')].forEach(li => {
+      li.classList.toggle('active', li.dataset.dept === currentDept);
+
+      li.onclick = () => {
+        currentDept = li.dataset.dept;
+        [...deptList.querySelectorAll('li')].forEach(x => x.classList.remove('active'));
+        li.classList.add('active');
+        renderCards();
+      };
+    });
+  }
+
+  function renderCards() {
+    const grid = document.getElementById('cardGrid');
+
+    const filtered = currentDept
+      ? allEmployees.filter(e => ((e.maPb || 'N/A').trim() === currentDept))
+      : allEmployees;
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#9e9e9e;">
+        Không có nhân viên trong nhóm lọc này
+      </div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(emp => cardHTML(emp)).join('');
+
+    // add click open modal
+    filtered.forEach(emp => {
+      const el = document.getElementById(`emp_${emp.id}`);
+      if (el) el.addEventListener('click', () => openModal(emp));
+    });
+  }
+
+  function cardHTML(emp) {
+    const name = emp.hoTen || '—';
+    const position = emp.chucDanh || '—';
+    const dept = (emp.maPb || 'N/A').trim();
+    const code = emp.maNv || '—';
+
+    const email = emp.email || `${String(code).toLowerCase()}@example.com`;
+    const phone = emp.soDienThoai || '—';
+
+    const avatar = emp.avatarUrl || defaultAvatar(emp.gioiTinh);
+
+    const statusInfo = statusFromRow(emp);
+    const dotClass = statusInfo.dotClass;
+    const footerLabel = statusInfo.footerLabel;
+    const showAlert = statusInfo.showAlert;
+
+    return `
+      <div class="employee-card" id="emp_${emp.id}" title="Click để Sửa/Xóa">
+        <div class="employee-avatar">
+          <img src="${escapeHtml(avatar)}" alt="${escapeHtml(name)}">
+        </div>
+        <div class="employee-info">
+          <div class="status-dot ${dotClass} status-dot"></div>
+          <div class="employee-name">${escapeHtml(name)}</div>
+          <div class="employee-position">${escapeHtml(position)}</div>
+          <div class="employee-tags">${escapeHtml(dept)} • ${escapeHtml(code)}</div>
+          <div class="employee-contact">
+            ${escapeHtml(email)}<br>
+            ${escapeHtml(phone)}
+          </div>
+          ${showAlert ? `<div class="alert-icon">!</div>` : ``}
+          <div class="card-footer-label">
+            <span class="dot" style="background:${dotColor(dotClass)}"></span>
+            ${escapeHtml(footerLabel)}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function openModal(emp){
+    selectedEmployeeId = emp.id;
+    modalError.style.display = 'none';
+    modalError.textContent = '';
+
+    modalTitle.textContent = `Cập nhật hồ sơ (ID: ${emp.id})`;
+
+    f_maNv.value = emp.maNv || '';
+    f_hoTen.value = emp.hoTen || '';
+    f_chucDanh.value = emp.chucDanh || '';
+    f_maPb.value = emp.maPb || '';
+    f_ngaySinh.value = emp.ngaySinh || '';
+    f_gioiTinh.value = emp.gioiTinh || '';
+    f_heSoLuong.value = (emp.heSoLuong ?? '') === null ? '' : (emp.heSoLuong ?? '');
+    f_trangThai.value = emp.trangThai || '';
+    f_email.value = emp.email || '';
+    f_soDienThoai.value = emp.soDienThoai || '';
+    f_avatarUrl.value = emp.avatarUrl || '';
+
+    modalBackdrop.style.display = 'flex';
+  }
+
+  function closeModal(){
+    selectedEmployeeId = null;
+    modalBackdrop.style.display = 'none';
+  }
+
+  async function handleSave(){
+    if(!selectedEmployeeId) return;
+
+    const payload = {
+      maNv: f_maNv.value.trim(),
+      hoTen: f_hoTen.value.trim(),
+      chucDanh: f_chucDanh.value.trim(),
+      maPb: f_maPb.value.trim(),
+      ngaySinh: f_ngaySinh.value,
+      gioiTinh: f_gioiTinh.value,
+      heSoLuong: f_heSoLuong.value,   // server đang nhận string cũng ok
+      trangThai: f_trangThai.value,
+      email: f_email.value.trim(),
+      soDienThoai: f_soDienThoai.value.trim(),
+      avatarUrl: f_avatarUrl.value.trim()
+    };
+
+    if(!payload.maNv || !payload.hoTen){
+      showModalError("Mã NV và Họ tên là bắt buộc.");
+      return;
+    }
+
+    try{
+      const res = await fetch(`${API_URL}/employees/${selectedEmployeeId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await res.json();
+      if(!result.success){
+        showModalError(result.error || "Cập nhật thất bại");
+        return;
+      }
+
+      closeModal();
+      await loadEmployees();
+      alert("Cập nhật thành công!");
+    }catch(e){
+      console.error(e);
+      showModalError("Không thể kết nối server để cập nhật.");
+    }
+  }
+
+  async function handleDelete(){
+    if(!selectedEmployeeId) return;
+    if(!confirm("Bạn chắc chắn muốn XÓA nhân viên này?")) return;
+
+    try{
+      const res = await fetch(`${API_URL}/employees/${selectedEmployeeId}`, {
+        method: 'DELETE'
+      });
+      const result = await res.json();
+
+      if(!result.success){
+        showModalError(result.error || "Xóa thất bại");
+        return;
+      }
+
+      closeModal();
+      await loadEmployees();
+      alert("Đã xóa nhân viên!");
+    }catch(e){
+      console.error(e);
+      showModalError("Không thể kết nối server để xóa.");
+    }
+  }
+
+  function showModalError(msg){
+    modalError.textContent = msg;
+    modalError.style.display = 'block';
+  }
+
+  function statusFromRow(emp) {
+    const raw = (emp.trangThai || '').toLowerCase().trim();
+
+    if (raw.includes('dang') || raw.includes('làm')) {
+      return { dotClass: 'green', footerLabel: 'Đang làm việc', showAlert: false };
+    }
+    if (raw.includes('khoa') || raw.includes('khóa')) {
+      return { dotClass: 'red', footerLabel: 'Đã khóa', showAlert: true };
+    }
+    if (raw.includes('nghi') || raw.includes('thôi')) {
+      return { dotClass: 'orange', footerLabel: 'Nghỉ việc', showAlert: false };
+    }
+
+    const hasSalary = emp.heSoLuong !== null && emp.heSoLuong !== '' && emp.heSoLuong !== undefined;
+    if (!hasSalary) return { dotClass: 'red', footerLabel: 'Cần cập nhật thông tin', showAlert: true };
+
+    return { dotClass: 'green', footerLabel: 'Đang làm việc', showAlert: false };
+  }
+
+  function dotColor(dotClass){
+    if(dotClass==='green') return '#4caf50';
+    if(dotClass==='red') return '#e53935';
+    return '#fb8c00';
+  }
+
+  function defaultAvatar(gioiTinh) {
+    if (gioiTinh === 'Nữ') {
+      return 'https://i.pinimg.com/736x/d5/4f/9c/d54f9c98d56c777db91424c1bf8e62a4.jpg';
+    }
+    return 'https://banobagi.vn/wp-content/uploads/2025/04/avatar-nam-4-1.jpg';
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+  async function handleUploadAvatar(){
+  if(!selectedEmployeeId){
+    alert("Chưa chọn nhân viên.");
+    return;
+  }
+
+  const file = f_avatarFile.files && f_avatarFile.files[0];
+  if(!file){
+    alert("Bạn chưa chọn ảnh.");
+    return;
+  }
+
+  // Client-side check size (optional)
+  if(file.size > 2 * 1024 * 1024){
+    alert("Ảnh quá lớn. Tối đa 2MB.");
+    return;
+  }
+
+  try{
+    uploadHint.textContent = "Đang tải ảnh lên...";
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    const res = await fetch(`${API_URL}/employees/${selectedEmployeeId}/avatar`, {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await res.json();
+    if(!result.success){
+      uploadHint.textContent = "Upload thất bại";
+      showModalError(result.error || "Upload thất bại");
+      return;
+    }
+
+    // Set avatarUrl returned from server
+    f_avatarUrl.value = result.data.avatarUrl;
+    uploadHint.textContent = "Upload thành công ✅ (nhớ bấm Lưu để cập nhật các field khác nếu có)";
+
+    // Optional: refresh list immediately to see new avatar
+    await loadEmployees();
+
+  }catch(e){
+    console.error(e);
+    uploadHint.textContent = "Không thể upload";
+    showModalError("Không thể kết nối server để upload ảnh.");
+  }
+}
+
+</script>
+
+</body>
+</html>

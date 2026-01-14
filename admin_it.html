@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản trị hệ thống - Admin IT</title>
+    <style>
+        :root {
+            --gov-green: #3399FF;
+            --gov-green-dark: #3399FF;
+            --gov-red: #3399CC;
+            --gov-gold: #f9a825;
+            --bg-page: #f4f6f7;
+            --text-main: #212121;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: "Arial", sans-serif;
+            margin: 0;
+            background: var(--bg-page);
+            color: var(--text-main);
+        }
+
+        .top-bar {
+            height: 6px;
+            background: var(--gov-red);
+        }
+
+        .page-wrapper {
+            max-width: 1200px;
+            margin: 24px auto 32px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 3px 14px rgba(0,0,0,0.12);
+            overflow: hidden;
+        }
+
+        .header-gov {
+            background: linear-gradient(90deg, var(--gov-green-dark), var(--gov-green));
+            color: #ffffff;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .gov-emblem {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 2px solid var(--gov-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at 30% 30%, #ffffff, var(--gov-red));
+            font-weight: bold;
+            font-size: 26px;
+            color: #fff;
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.2);
+        }
+
+        .gov-title-block { line-height: 1.3; }
+
+        .gov-title-top {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        .gov-title-main {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .gov-title-sub {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .system-bar {
+            background: #eceff1;
+            padding: 8px 24px;
+            border-bottom: 1px solid #cfd8dc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .system-name {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gov-green-dark);
+            font-weight: 600;
+        }
+
+        .system-user {
+            font-size: 12px;
+            color: #546e7a;
+        }
+
+        .system-user span {
+            font-weight: 600;
+            color: var(--gov-red);
+        }
+
+        /* MENU */
+        .nav-bar {
+            background: #ffffff;
+            border-bottom: 1px solid #cfd8dc;
+            padding: 0 24px;
+        }
+
+        .nav-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .nav-item a {
+            display: block;
+            padding: 10px 0;
+            font-size: 13px;
+            text-decoration: none;
+            color: #455a64;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-item a:hover {
+            color: var(--gov-green-dark);
+            border-bottom-color: #b0bec5;
+        }
+
+        .nav-item a.active {
+            color: var(--gov-green-dark);
+            border-bottom-color: var(--gov-green);
+            font-weight: 600;
+        }
+
+        .content {
+            padding: 18px 24px 28px;
+        }
+
+        .section-title {
+            margin-top: 4px;
+            margin-bottom: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--gov-green-dark);
+        }
+
+        .section-note {
+            font-size: 12px;
+            color: #757575;
+            margin-bottom: 12px;
+        }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 2.2fr;
+            grid-gap: 16px;
+            align-items: flex-start;
+        }
+
+        .panel {
+            border: 1px solid #cfd8dc;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            background: #fafafa;
+        }
+
+        .panel-header {
+            background: #eceff1;
+            border-bottom: 1px solid #cfd8dc;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #37474f;
+        }
+
+        .panel-body {
+            padding: 10px 14px 10px;
+        }
+
+        .panel-body.split {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            grid-gap: 12px;
+        }
+
+        .Tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            border: 1px solid #b0bec5;
+            background: #ffffff;
+            margin-right: 6px;
+        }
+
+        .Tag--prod { border-color: #81c784; color: #2e7d32; }
+        .Tag--dev { border-color: #64b5f6; color: #1565c0; }
+        .Tag--warn { border-color: #ffb74d; color: #ef6c00; }
+
+        .info-list {
+            font-size: 13px;
+            margin: 0;
+            padding-left: 16px;
+        }
+
+        .info-list li { margin-bottom: 4px; }
+
+        .key-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--gov-green-dark);
+        }
+
+        .sub-label {
+            font-size: 11px;
+            color: #757575;
+        }
+
+        .form-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-row label {
+            width: 110px;
+            font-size: 13px;
+            color: #37474f;
+        }
+
+        .form-row input,
+        .form-row select {
+            flex: 1;
+            padding: 4px 7px;
+            font-size: 13px;
+            border-radius: 3px;
+            border: 1px solid #b0bec5;
+            background: #ffffff;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .form-row input:focus,
+        .form-row select:focus {
+            outline: none;
+            border-color: var(--gov-green);
+            box-shadow: 0 0 0 1px rgba(0,105,92,0.25);
+        }
+
+        .form-actions {
+            margin-top: 8px;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border-radius: 3px;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+            margin-right: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: var(--gov-green);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover { background: var(--gov-green-dark); }
+
+        .btn-reset {
+            background: #eceff1;
+            color: #37474f;
+        }
+
+        .btn-reset:hover { background: #cfd8dc; }
+
+        .btn-danger {
+            background: #e53935;
+            color: #ffffff;
+        }
+
+        .btn-danger:hover { background: #c62828; }
+
+        .btn-outline {
+            background: #3399ff;
+            color: white;
+            border: 1px solid #b0bec5;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        thead {
+            background: var(--gov-green-dark);
+            color: #ffffff;
+        }
+
+        th, td {
+            padding: 6px 8px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr:nth-child(odd) { background: #ffffff; }
+        tbody tr:nth-child(even) { background: #f5f5f5; }
+
+        tbody tr:hover { background: #e8f5e9; }
+
+        td.text-left,
+        th.text-left { text-align: left; }
+
+        td.text-right,
+        th.text-right { text-align: right; }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            color: #ffffff;
+        }
+
+        .badge--active { background: #43a047; }
+        .badge--locked { background: #e53935; }
+
+        .role-pill {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            border: 1px solid #b0bec5;
+            background: #ffffff;
+        }
+
+        .role-pill[data-role="ADMIN_IT"] { border-color: #e53935; color: #b71c1c; }
+        .role-pill[data-role="HR_ADMIN"] { border-color: #29b6f6; color: #01579b; }
+        .role-pill[data-role="MANAGER"] { border-color: #ffb74d; color: #ef6c00; }
+        .role-pill[data-role="EMPLOYEE"] { border-color: #a5d6a7; color: #2e7d32; }
+
+        .filter-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-row select {
+            padding: 4px 8px;
+            font-size: 12px;
+            border-radius: 3px;
+            border: 1px solid #b0bec5;
+        }
+
+        .small-label {
+            font-size: 11px;
+            color: #616161;
+            margin-bottom: 4px;
+        }
+
+        .footer-note {
+            margin-top: 10px;
+            font-size: 11px;
+            color: #9e9e9e;
+            text-align: right;
+        }
+
+        @media (max-width: 960px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar"></div>
+
+<div class="page-wrapper">
+    <!-- HEADER -->
+    <div class="header-gov">
+        <div class="gov-emblem">ABC</div>
+        <div class="gov-title-block">
+            <div class="gov-title-top">Công ty trách nhiệm hữu hạn 1 thành viên</div>
+            <div class="gov-title-main">PHÒNG NỘI VỤ - CÔNG TY TNHH CÔNG NGHỆ ABC</div>
+            <div class="gov-title-sub">Màn hình quản trị hệ thống (Admin IT)</div>
+        </div>
+    </div>
+
+    <!-- SYSTEM BAR -->
+    <div class="system-bar">
+        <div class="system-name">Hệ thống quản lý nhân sự nội bộ</div>
+        <div class="system-user">Người dùng: <span>ADMIN_IT</span> (vai trò: Quản trị hệ thống)</div>
+    </div>
+
+    <!-- MENU -->
+    <nav class="nav-bar">
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="nhansu.html">Quản lý nhân sự</a>
+            </li>
+            <li class="nav-item">
+                <a href="phongban.html">Quản lý phòng ban</a>
+            </li>
+            <li class="nav-item">
+                <a href="chamcong.html">Bảng chấm công</a>
+            </li>
+            <li class="nav-item">
+                <a href="hosonhanvien.html">Hồ sơ nhân viên</a>
+            </li>
+            <li class="nav-item">
+                <a href="ot.html">Làm thêm giờ (OT)</a>
+            </li>
+            <li class="nav-item">
+                <a href="admin_it.html" class="active">Quản trị hệ thống</a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="content">
+        <div class="section-title">Quản trị hệ thống</div>
+        <div class="section-note">
+            Trang dành riêng cho <b>Admin IT</b> để cấu hình hệ thống, quản lý tài khoản người dùng, phân quyền và theo dõi nhật ký hoạt động.
+        </div>
+
+        <div class="layout-grid">
+            <!-- CỘT TRÁI: THÔNG TIN HỆ THỐNG + TẠO TÀI KHOẢN -->
+            <div>
+                <!-- THÔNG TIN HỆ THỐNG -->
+                <div class="panel">
+                    <div class="panel-header">Thông tin hệ thống</div>
+                    <div class="panel-body">
+                        <div class="panel-body split">
+                            <div>
+                                <div class="small-label">Phiên bản & môi trường</div>
+                                <ul class="info-list">
+                                    <li>Hệ thống: <b>HRMS-INT</b></li>
+                                    <li>Phiên bản: <b>v1.0.0-demo</b></li>
+                                    <li>Môi trường: <span class="Tag Tag--dev">DEV</span></li>
+                                    <li>Đơn vị triển khai: Công ty công nghệ ABC</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <div class="small-label">Sức khỏe hệ thống (minh họa)</div>
+                                <div>
+                                    <div class="key-number">4</div>
+                                    <div class="sub-label">Modules đang hoạt động<br>(Nhân sự, Phòng ban, Chấm công, OT)</div>
+                                </div>
+                                <div style="margin-top: 6px;">
+                                    <span class="Tag Tag--prod">DB OK</span>
+                                    <span class="Tag Tag--dev">API Mock</span>
+                                    <span class="Tag Tag--warn">Backup: 01 ngày trước</span>
+                                </div>
+                                <div class="form-actions" style="margin-top:10px;">
+                                    <button class="btn btn-outline" type="button">
+                                        Sao lưu hệ thống (demo)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TẠO / CHỈNH SỬA TÀI KHOẢN -->
+                <div class="panel">
+                    <div class="panel-header">Tạo / cập nhật tài khoản người dùng</div>
+                    <div class="panel-body">
+                        <div class="form-grid">
+                            <div class="form-row">
+                                <label for="username">Username:</label>
+                                <input id="username" type="text" placeholder="VD: HR001, MANAGER_KD">
+                            </div>
+                            <div class="form-row">
+                                <label for="fullname">Họ và tên:</label>
+                                <input id="fullname" type="text" placeholder="Họ và tên hiển thị">
+                            </div>
+                            <div class="form-row">
+                                <label for="role">Vai trò (Role):</label>
+                                <select id="role">
+                                    <option value="HR_ADMIN">HR Admin</option>
+                                    <option value="MANAGER">Manager</option>
+                                    <option value="EMPLOYEE">Employee</option>
+                                    <option value="ADMIN_IT">Admin IT</option>
+                                </select>
+                            </div>
+                            <div class="form-row">
+                                <label for="employeeCode">Mã nhân viên (nếu có):</label>
+                                <input id="employeeCode" type="text" placeholder="VD: NV001 (liên kết hồ sơ)">
+                            </div>
+                            <div class="form-row">
+                                <label for="password">Mật khẩu khởi tạo:</label>
+                                <input id="password" type="password" placeholder="Chỉ minh họa, không lưu thật">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn btn-primary" type="button" onclick="createOrUpdateUser()">
+                                Lưu tài khoản
+                            </button>
+                            <button class="btn btn-reset" type="button" onclick="resetForm()">
+                                Xóa form
+                            </button>
+                        </div>
+                        <div class="small-label" style="margin-top:6px;">
+                            *Lưu ý: Đây là giao diện demo phía front-end. Khi triển khai thật, dữ liệu sẽ được lưu ở backend / database.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CỘT PHẢI: DANH SÁCH USER + LOG HỆ THỐNG -->
+            <div>
+                <div class="panel">
+                    <div class="panel-header">Danh sách tài khoản người dùng</div>
+                    <div class="panel-body">
+                        <div class="filter-row">
+                            <div>
+                                <div class="small-label">Lọc theo vai trò:</div>
+                                <select id="filterRole" onchange="renderUserTable()">
+                                    <option value="">Tất cả</option>
+                                    <option value="ADMIN_IT">Admin IT</option>
+                                    <option value="HR_ADMIN">HR Admin</option>
+                                    <option value="MANAGER">Manager</option>
+                                    <option value="EMPLOYEE">Employee</option>
+                                </select>
+                            </div>
+                            <div>
+                                <div class="small-label">Lọc theo trạng thái:</div>
+                                <select id="filterStatus" onchange="renderUserTable()">
+                                    <option value="">Tất cả</option>
+                                    <option value="active">Đang hoạt động</option>
+                                    <option value="locked">Đã khóa</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <table id="userTable">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th class="text-left">Username</th>
+                                    <th class="text-left">Họ và tên</th>
+                                    <th>Vai trò</th>
+                                    <th>Mã NV</th>
+                                    <th>Trạng thái</th>
+                                    <th class="text-left">Lần đăng nhập cuối</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- JS render -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">Nhật ký hoạt động (minh họa)</div>
+                    <div class="panel-body">
+                        <table id="logTable">
+                            <thead>
+                                <tr>
+                                    <th>Thời gian</th>
+                                    <th class="text-left">Tài khoản</th>
+                                    <th class="text-left">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2025-12-18 09:15</td>
+                                    <td class="text-left">ADMIN_IT</td>
+                                    <td class="text-left">Tạo tài khoản HR001 (role: HR_ADMIN)</td>
+                                </tr>
+                                <tr>
+                                    <td>2025-12-18 09:20</td>
+                                    <td class="text-left">HR001</td>
+                                    <td class="text-left">Cập nhật thông tin nhân sự NV001</td>
+                                </tr>
+                                <tr>
+                                    <td>2025-12-18 10:05</td>
+                                    <td class="text-left">ADMIN_IT</td>
+                                    <td class="text-left">Khóa tài khoản EMP_TEST_01</td>
+                                </tr>
+                                <tr>
+                                    <td>2025-12-18 10:30</td>
+                                    <td class="text-left">ADMIN_IT</td>
+                                    <td class="text-left">Sao lưu cấu hình hệ thống (demo)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="small-label" style="margin-top:6px;">
+                            Thực tế có thể lưu log chi tiết ở bảng riêng: thời gian, IP, chức năng thao tác, dữ liệu trước/sau...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-note">
+            Giao diện mô phỏng phục vụ mục đích học tập, không phải hệ thống chính thức.
+        </div>
+    </div>
+</div>
+
+<script>
+  const API_URL = 'http://localhost:3000/api';
+  const ACTOR = 'ADMIN_IT';
+
+  let usersCache = [];
+
+  const userTableBody = document.querySelector("#userTable tbody");
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadUsers();
+    await loadLogs();
+  });
+
+  async function loadUsers() {
+    try {
+      const res = await fetch(`${API_URL}/users`);
+      const result = await res.json();
+      if (result.success) {
+        usersCache = result.data || [];
+        renderUserTable();
+      } else {
+        alert('Lỗi tải users: ' + (result.error || ''));
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Không thể kết nối server để tải users.');
+    }
+  }
+
+  async function loadLogs() {
+    try {
+      const res = await fetch(`${API_URL}/logs`);
+      const result = await res.json();
+      if (result.success) {
+        renderLogs(result.data || []);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function renderLogs(logs) {
+    const logTableBody = document.querySelector("#logTable tbody");
+    logTableBody.innerHTML = "";
+
+    logs.forEach(l => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${l.time || '-'}</td>
+        <td class="text-left">${l.actor || '-'}</td>
+        <td class="text-left">${l.action || '-'}</td>
+      `;
+      logTableBody.appendChild(tr);
+    });
+  }
+
+  function renderUserTable() {
+    const filterRole = document.getElementById("filterRole").value;
+    const filterStatus = document.getElementById("filterStatus").value;
+
+    userTableBody.innerHTML = "";
+
+    const filtered = usersCache.filter(u => {
+      let ok = true;
+
+      if (filterRole && u.role !== filterRole) ok = false;
+
+      const isActive = Number(u.active) === 1;
+      if (filterStatus === "active" && !isActive) ok = false;
+      if (filterStatus === "locked" && isActive) ok = false;
+
+      return ok;
+    });
+
+    filtered.forEach((u, idx) => {
+      const isActive = Number(u.active) === 1;
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${idx + 1}</td>
+        <td class="text-left">${u.username}</td>
+        <td class="text-left">${u.fullName}</td>
+        <td>
+          <span class="role-pill" data-role="${u.role}">
+            ${renderRoleLabel(u.role)}
+          </span>
+        </td>
+        <td>${u.employeeCode || "-"}</td>
+        <td>
+          <span class="badge ${isActive ? "badge--active" : "badge--locked"}">
+            ${isActive ? "Đang hoạt động" : "Đã khóa"}
+          </span>
+        </td>
+        <td class="text-left">${u.lastLogin || "-"}</td>
+        <td>
+          <button class="btn btn-outline" type="button" onclick="toggleUserStatus('${escapeQuotes(u.username)}', ${isActive ? 1 : 0})">
+            ${isActive ? "Khóa" : "Mở khóa"}
+          </button>
+          <button class="btn btn-reset" type="button" onclick="resetPassword('${escapeQuotes(u.username)}')">
+            Reset MK
+          </button>
+          <button class="btn btn-danger" type="button" onclick="deleteUser('${escapeQuotes(u.username)}')">
+            Xóa
+          </button>
+        </td>
+      `;
+      userTableBody.appendChild(tr);
+    });
+  }
+
+  function renderRoleLabel(role) {
+    switch (role) {
+      case "ADMIN_IT": return "Admin IT";
+      case "HR_ADMIN": return "HR Admin";
+      case "MANAGER": return "Manager";
+      case "EMPLOYEE": return "Employee";
+      default: return role;
+    }
+  }
+
+  async function createOrUpdateUser() {
+    const username = document.getElementById("username").value.trim();
+    const fullName = document.getElementById("fullname").value.trim();
+    const role = document.getElementById("role").value;
+    const employeeCode = document.getElementById("employeeCode").value.trim();
+    const password = document.getElementById("password").value; // demo
+
+    if (!username) return alert("Vui lòng nhập username.");
+    if (!fullName) return alert("Vui lòng nhập họ và tên.");
+
+    const existed = usersCache.find(u => u.username === username);
+
+    try {
+      if (existed) {
+        if (!confirm("Username đã tồn tại. Bạn có muốn cập nhật thông tin tài khoản này?")) return;
+
+        const res = await fetch(`${API_URL}/users/${encodeURIComponent(username)}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fullName, role, employeeCode })
+        });
+        const result = await res.json();
+
+        if (!result.success) return alert('Lỗi: ' + (result.error || ''));
+
+        await addLog(`${ACTOR} cập nhật tài khoản ${username} (role: ${renderRoleLabel(role)})`);
+        alert("Đã cập nhật tài khoản!");
+      } else {
+        const res = await fetch(`${API_URL}/users`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, fullName, role, employeeCode, password })
+        });
+        const result = await res.json();
+
+        if (!result.success) return alert('Lỗi: ' + (result.error || ''));
+
+        await addLog(`${ACTOR} tạo tài khoản ${username} (role: ${renderRoleLabel(role)})`);
+        alert("Đã tạo tài khoản mới!");
+      }
+
+      document.getElementById("password").value = "";
+      resetForm();
+      await loadUsers();
+      await loadLogs();
+    } catch (e) {
+      console.error(e);
+      alert("Không thể kết nối server.");
+    }
+  }
+
+  function resetForm() {
+    document.getElementById("username").value = "";
+    document.getElementById("fullname").value = "";
+    document.getElementById("role").value = "HR_ADMIN";
+    document.getElementById("employeeCode").value = "";
+    document.getElementById("password").value = "";
+  }
+
+  async function toggleUserStatus(username, currentActive) {
+    const nextActive = currentActive ? false : true;
+
+    try {
+      const res = await fetch(`${API_URL}/users/${encodeURIComponent(username)}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ active: nextActive })
+      });
+      const result = await res.json();
+      if (!result.success) return alert('Lỗi: ' + (result.error || ''));
+
+      await addLog(`${ACTOR} ${nextActive ? "mở khóa" : "khóa"} tài khoản ${username}`);
+      await loadUsers();
+      await loadLogs();
+    } catch (e) {
+      console.error(e);
+      alert("Không thể kết nối server.");
+    }
+  }
+
+  async function resetPassword(username) {
+    const newPassword = prompt("Nhập mật khẩu mới (demo):");
+    if (!newPassword) return;
+
+    try {
+      const res = await fetch(`${API_URL}/users/${encodeURIComponent(username)}/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newPassword })
+      });
+      const result = await res.json();
+      if (!result.success) return alert('Lỗi: ' + (result.error || ''));
+
+      await addLog(`${ACTOR} reset mật khẩu tài khoản ${username} (demo)`);
+      alert("Đã reset mật khẩu (demo)!");
+      await loadLogs();
+    } catch (e) {
+      console.error(e);
+      alert("Không thể kết nối server.");
+    }
+  }
+
+  async function deleteUser(username) {
+    if (!confirm("Bạn chắc chắn muốn xóa tài khoản " + username + " ?")) return;
+
+    try {
+      const res = await fetch(`${API_URL}/users/${encodeURIComponent(username)}`, { method: 'DELETE' });
+      const result = await res.json();
+      if (!result.success) return alert('Lỗi: ' + (result.error || ''));
+
+      await addLog(`${ACTOR} xóa tài khoản ${username}`);
+      await loadUsers();
+      await loadLogs();
+    } catch (e) {
+      console.error(e);
+      alert("Không thể kết nối server.");
+    }
+  }
+
+  async function addLog(action) {
+    try {
+      await fetch(`${API_URL}/logs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ actor: ACTOR, action })
+      });
+    } catch (e) {
+      console.error('log error', e);
+    }
+  }
+
+  function escapeQuotes(str) {
+    return String(str).replace(/'/g, "\\'").replace(/"/g, '\\"');
+  }
+
+</script>
+
+</body>
+</html>

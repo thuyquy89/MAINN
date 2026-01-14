@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Quản lý phòng ban</title>
+  <style>
+    :root {
+      --gov-green: #3399FF;
+      --gov-green-dark: #3399FF;
+      --gov-red: #3399CC;
+      --gov-gold: #f9a825;
+      --bg-page: #f4f6f7;
+      --text-main: #212121;
+    }
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; margin: 0; background: var(--bg-page); color: var(--text-main); }
+    .top-bar { height: 6px; background: var(--gov-red); }
+    .page-wrapper { max-width: 1100px; margin: 24px auto 32px; background: #fff; border-radius: 8px; box-shadow: 0 3px 14px rgba(0,0,0,0.12); overflow: hidden; }
+    .header-gov { background: linear-gradient(90deg, var(--gov-green-dark), var(--gov-green)); color: #fff; padding: 16px 24px; display:flex; align-items:center; gap:16px; }
+    .gov-emblem { width:64px; height:64px; border-radius:50%; border:2px solid var(--gov-gold); display:flex; align-items:center; justify-content:center; background: radial-gradient(circle at 30% 30%, #fff, var(--gov-red)); font-weight:bold; font-size:26px; color:#fff; }
+    .gov-title-top{font-size:12px; text-transform:uppercase; letter-spacing:1px; opacity:.9;}
+    .gov-title-main{font-size:18px; font-weight:700;}
+    .gov-title-sub{font-size:13px; opacity:.9;}
+    .system-bar{background:#eceff1; padding:8px 24px; border-bottom:1px solid #cfd8dc; display:flex; justify-content:space-between; align-items:center;}
+    .system-name{font-size:13px; text-transform:uppercase; letter-spacing:1px; color:var(--gov-green-dark); font-weight:600;}
+    .system-user{font-size:12px; color:#546e7a;}
+    .system-user span{font-weight:600; color:var(--gov-red);}
+    .nav-bar{background:#fff; border-bottom:1px solid #cfd8dc; padding:0 24px;}
+    .nav-list{list-style:none; margin:0; padding:0; display:flex; gap:20px;}
+    .nav-item a{display:block; padding:10px 0; font-size:13px; text-decoration:none; color:#455a64; border-bottom:3px solid transparent;}
+    .nav-item a.active{color:var(--gov-green-dark); border-bottom-color:var(--gov-green); font-weight:600;}
+    .content{padding:18px 24px 28px;}
+    .section-title{margin-top:16px; margin-bottom:10px; font-size:16px; font-weight:600; color:var(--gov-green-dark); display:flex; align-items:center; gap:8px;}
+    .section-title::before{content:""; width:4px; height:16px; border-radius:2px; background:var(--gov-red);}
+    .section-note{font-size:12px; color:#757575; margin-bottom:8px;}
+    .panel{border:1px solid #cfd8dc; border-radius:6px; margin-bottom:20px; background:#fafafa;}
+    .panel-header{background:#eceff1; border-bottom:1px solid #cfd8dc; padding:8px 12px; font-size:13px; font-weight:600; text-transform:uppercase; color:#37474f;}
+    .panel-body{padding:12px 14px 10px;}
+    .form-grid{display:flex; flex-wrap:wrap; gap:10px 24px;}
+    .form-row{display:flex; align-items:center; gap:8px; min-width:280px; margin-bottom:8px;}
+    .form-row label{width:110px; font-size:13px; color:#37474f;}
+    .form-row input{flex:1; padding:5px 8px; font-size:13px; border:1px solid #b0bec5; border-radius:3px; background:#fff;}
+    .form-actions{margin-top:8px;}
+    .btn{padding:6px 14px; border-radius:3px; border:none; font-size:13px; cursor:pointer; margin-right:8px; display:inline-flex; align-items:center; gap:6px; text-transform:uppercase; letter-spacing:.5px;}
+    .btn-primary{background:var(--gov-green); color:#fff;}
+    .btn-primary:hover{background:var(--gov-green-dark);}
+    .btn-reset{background:#eceff1; color:#37474f;}
+    .btn-reset:hover{background:#cfd8dc;}
+    .btn-secondary{background:#fff3e0; color:#8d6e63; border:1px solid #ffcc80;}
+    .btn-secondary:hover{background:#ffe0b2;}
+    table{width:100%; border-collapse:collapse; font-size:13px;}
+    thead{background:var(--gov-green-dark); color:#fff;}
+    th, td{padding:7px 10px; text-align:left; border-bottom:1px solid #e0e0e0;}
+    th{text-transform:uppercase; font-size:12px; letter-spacing:.5px;}
+    tbody tr:nth-child(odd){background:#fff;}
+    tbody tr:nth-child(even){background:#f5f5f5;}
+    tbody tr:hover{background:#e8f5e9;}
+    .table-actions .btn{padding:5px 10px; margin-right:6px;}
+  </style>
+</head>
+<body>
+
+<div class="top-bar"></div>
+
+<div class="page-wrapper">
+  <div class="header-gov">
+    <div class="gov-emblem">VN</div>
+    <div class="gov-title-block">
+      <div class="gov-title-top">Công ty trách nhiệm hữu hạn 1 thành viên</div>
+      <div class="gov-title-main">PHÒNG NỘI VỤ - CÔNG NGHỆ ABC</div>
+      <div class="gov-title-sub">Hệ thống quản lý, theo dõi hồ sơ phòng ban, đơn vị</div>
+    </div>
+  </div>
+
+  <div class="system-bar">
+    <div class="system-name">Hệ thống quản lý nhân sự nội bộ</div>
+    <div class="system-user">Người dùng: <span>ADMIN_TEST</span></div>
+  </div>
+
+  <nav class="nav-bar">
+    <ul class="nav-list">
+      <li class="nav-item"><a href="nhansu.html">Quản lý nhân sự</a></li>
+      <li class="nav-item"><a href="phongban.html" class="active">Quản lý phòng ban</a></li>
+      <li class="nav-item"><a href="chamcong.html">Bảng chấm công</a></li>
+      <li class="nav-item"><a href="hosonhanvien.html">Hồ sơ nhân viên</a></li>
+      <li class="nav-item"><a href="ot.html">Làm thêm giờ(OT)</a></li>
+      <li class="nav-item"><a href="admin_it.html">Quản trị hệ thống</a></li>
+    </ul>
+  </nav>
+
+  <div class="content">
+    <div class="section-title">Quản lý phòng ban</div>
+    <div class="section-note">Quản lý các đơn vị, bộ phận trực thuộc (phòng, ban, bộ phận chức năng...).</div>
+
+    <div class="panel">
+      <div class="panel-header">Phiếu nhập thông tin phòng ban</div>
+      <div class="panel-body">
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="maPb">Mã phòng ban:</label>
+            <input type="text" id="maPb" placeholder="VD: IT, HCNS">
+          </div>
+          <div class="form-row">
+            <label for="tenPb">Tên phòng ban:</label>
+            <input type="text" id="tenPb" placeholder="VD: Phòng Hành chính - Nhân sự">
+          </div>
+          <div class="form-row">
+            <label for="moTaPb">Mô tả:</label>
+            <input type="text" id="moTaPb" placeholder="Ghi chú ngắn gọn chức năng chính">
+          </div>
+        </div>
+
+        <input type="hidden" id="editingPbId" value="">
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-primary" id="btnPbSubmit">
+            <span class="btn-icon">✔</span> Ghi nhận
+          </button>
+          <button type="button" class="btn btn-reset" id="btnPbReset">
+            <span class="btn-icon">↺</span> Làm lại
+          </button>
+          <button type="button" class="btn btn-secondary" id="btnPbCancel" style="display:none;">
+            <span class="btn-icon">⤺</span> Hủy sửa
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">Danh sách phòng ban</div>
+      <div class="panel-body">
+        <table>
+          <thead>
+            <tr>
+              <th>Mã phòng</th>
+              <th>Tên phòng ban</th>
+              <th>Số lượng nhân sự</th>
+              <th>Ghi chú</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody id="pbTableBody">
+            <tr>
+              <td colspan="5" style="text-align:center; color:#9e9e9e;">Đang tải dữ liệu...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="footer-note">Giao diện mô phỏng phục vụ mục đích học tập, không phải hệ thống chính thức.</div>
+  </div>
+</div>
+
+<script>
+  const API_URL = 'http://localhost:3000/api';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadDepartments();
+
+    document.getElementById('btnPbSubmit').addEventListener('click', handlePbSubmit);
+    document.getElementById('btnPbReset').addEventListener('click', resetPbForm);
+    document.getElementById('btnPbCancel').addEventListener('click', cancelPbEdit);
+  });
+
+  async function loadDepartments() {
+    try {
+      const res = await fetch(`${API_URL}/departments`);
+      const result = await res.json();
+      if (result.success) renderDepartments(result.data);
+      else alert('Lỗi tải danh sách phòng ban');
+    } catch (e) {
+      console.error(e);
+      document.getElementById('pbTableBody').innerHTML =
+        `<tr><td colspan="5" style="text-align:center; color:#e53935;">Không thể kết nối server. Vui lòng khởi động server.</td></tr>`;
+    }
+  }
+
+  function renderDepartments(list) {
+    const tbody = document.getElementById('pbTableBody');
+
+    if (!list || list.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#9e9e9e;">Chưa có phòng ban</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = list.map(d => `
+      <tr>
+        <td>${d.maPb || ''}</td>
+        <td>${d.tenPb || ''}</td>
+        <td>${d.soLuongNhanSu ?? 0}</td>
+        <td>${d.moTaPb || '—'}</td>
+        <td class="table-actions">
+          <button class="btn btn-secondary" type="button"
+            onclick="startPbEdit(${d.id}, '${escapeQuotes(d.maPb || '')}', '${escapeQuotes(d.tenPb || '')}', '${escapeQuotes(d.moTaPb || '')}')">
+            ✏ Sửa
+          </button>
+          <button class="btn btn-reset" type="button"
+            onclick="deleteDepartment(${d.id}, '${escapeQuotes(d.maPb || '')}', '${escapeQuotes(d.tenPb || '')}')">
+            🗑 Xóa
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  async function handlePbSubmit() {
+    const editingId = document.getElementById('editingPbId').value;
+
+    const payload = {
+      maPb: document.getElementById('maPb').value.trim().toUpperCase(),
+      tenPb: document.getElementById('tenPb').value.trim(),
+      moTaPb: document.getElementById('moTaPb').value.trim()
+    };
+
+    if (!payload.maPb || !payload.tenPb) {
+      alert('Vui lòng nhập Mã phòng ban và Tên phòng ban');
+      return;
+    }
+
+    try {
+      const url = editingId ? `${API_URL}/departments/${editingId}` : `${API_URL}/departments`;
+      const method = editingId ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
+        alert(editingId ? 'Cập nhật phòng ban thành công!' : 'Thêm phòng ban thành công!');
+        cancelPbEdit();
+        loadDepartments();
+      } else {
+        alert('Lỗi: ' + (result.error || 'Không xác định'));
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Không thể kết nối server. Hãy kiểm tra server đang chạy.');
+    }
+  }
+
+  function startPbEdit(id, maPb, tenPb, moTaPb) {
+    document.getElementById('editingPbId').value = id;
+
+    document.getElementById('maPb').value = maPb || '';
+    document.getElementById('tenPb').value = tenPb || '';
+    document.getElementById('moTaPb').value = moTaPb || '';
+
+    document.getElementById('btnPbSubmit').innerHTML = '<span class="btn-icon">💾</span> Cập nhật';
+    document.getElementById('btnPbCancel').style.display = 'inline-flex';
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function cancelPbEdit() {
+    document.getElementById('editingPbId').value = '';
+    resetPbForm();
+    document.getElementById('btnPbSubmit').innerHTML = '<span class="btn-icon">✔</span> Ghi nhận';
+    document.getElementById('btnPbCancel').style.display = 'none';
+  }
+
+  function resetPbForm() {
+    document.getElementById('maPb').value = '';
+    document.getElementById('tenPb').value = '';
+    document.getElementById('moTaPb').value = '';
+  }
+
+  async function deleteDepartment(id, maPb, tenPb) {
+    const ok = confirm(`Bạn có chắc muốn xóa phòng ban:\n- Mã: ${maPb}\n- Tên: ${tenPb}\n\nHành động này sẽ xóa khỏi database!`);
+    if (!ok) return;
+
+    try {
+      const res = await fetch(`${API_URL}/departments/${id}`, { method: 'DELETE' });
+      const result = await res.json();
+
+      if (result.success) {
+        alert('Đã xóa phòng ban!');
+        const editingId = document.getElementById('editingPbId').value;
+        if (editingId && String(editingId) === String(id)) cancelPbEdit();
+        loadDepartments();
+      } else {
+        alert('Lỗi: ' + (result.error || 'Không xác định'));
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Không thể kết nối server để xóa.');
+    }
+  }
+
+  function escapeQuotes(str) {
+    return String(str).replace(/'/g, "\\'").replace(/"/g, '\\"');
+  }
+</script>
+
+</body>
+</html>

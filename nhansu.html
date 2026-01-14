@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý nhân sự</title>
+    <style>
+        :root {
+            --gov-green: #3399FF;
+            --gov-green-dark: #3399FF;
+            --gov-red: #3399CC;
+            --gov-gold: #f9a825;
+            --bg-page: #f4f6f7;
+            --text-main: #212121;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: "Arial", sans-serif;
+            margin: 0;
+            background: var(--bg-page);
+            color: var(--text-main);
+        }
+
+        .top-bar { height: 6px; background: var(--gov-red); }
+
+        .page-wrapper {
+            max-width: 1100px;
+            margin: 24px auto 32px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 3px 14px rgba(0,0,0,0.12);
+            overflow: hidden;
+        }
+
+        .header-gov {
+            background: linear-gradient(90deg, var(--gov-green-dark), var(--gov-green));
+            color: #ffffff;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .gov-emblem {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 2px solid var(--gov-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at 30% 30%, #ffffff, var(--gov-red));
+            font-weight: bold;
+            font-size: 26px;
+            color: #fff;
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.2);
+        }
+
+        .gov-title-block { line-height: 1.3; }
+        .gov-title-top { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; }
+        .gov-title-main { font-size: 18px; font-weight: 700; }
+        .gov-title-sub { font-size: 13px; opacity: 0.9; }
+
+        .system-bar {
+            background: #eceff1;
+            padding: 8px 24px;
+            border-bottom: 1px solid #cfd8dc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .system-name {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gov-green-dark);
+            font-weight: 600;
+        }
+
+        .system-user { font-size: 12px; color: #546e7a; }
+        .system-user span { font-weight: 600; color: var(--gov-red); }
+
+        .nav-bar { background: #ffffff; border-bottom: 1px solid #cfd8dc; padding: 0 24px; }
+        .nav-list { list-style: none; margin: 0; padding: 0; display: flex; gap: 20px; }
+        .nav-item a { display: block; padding: 10px 0; font-size: 13px; text-decoration: none; color: #455a64; border-bottom: 3px solid transparent; }
+        .nav-item a:hover { color: var(--gov-green-dark); border-bottom-color: #b0bec5; }
+        .nav-item a.active { color: var(--gov-green-dark); border-bottom-color: var(--gov-green); font-weight: 600; }
+
+        .content { padding: 18px 24px 28px; }
+
+        .section-title {
+            margin-top: 16px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gov-green-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::before {
+            content: "";
+            width: 4px;
+            height: 16px;
+            border-radius: 2px;
+            background: var(--gov-red);
+        }
+
+        .section-note { font-size: 12px; color: #757575; margin-bottom: 8px; }
+
+        .panel { border: 1px solid #cfd8dc; border-radius: 6px; margin-bottom: 20px; background: #fafafa; }
+        .panel-header { background: #eceff1; border-bottom: 1px solid #cfd8dc; padding: 8px 12px; font-size: 13px; font-weight: 600; text-transform: uppercase; color: #37474f; }
+        .panel-body { padding: 12px 14px 10px; }
+
+        .form-grid, .filter-grid { display: flex; flex-wrap: wrap; gap: 10px 24px; }
+
+        .form-row, .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 260px;
+            margin-bottom: 8px;
+        }
+
+        .form-row label { width: 110px; font-size: 13px; color: #37474f; }
+        .filter-row label { width: 90px; font-size: 13px; }
+
+        .form-row input, .form-row select, .filter-row input, .filter-row select {
+            flex: 1;
+            padding: 5px 8px;
+            font-size: 13px;
+            border: 1px solid #b0bec5;
+            border-radius: 3px;
+            background: #ffffff;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .form-row input:focus, .form-row select:focus, .filter-row input:focus, .filter-row select:focus {
+            outline: none;
+            border-color: var(--gov-green);
+            box-shadow: 0 0 0 1px rgba(0,105,92,0.25);
+        }
+
+        .form-actions { margin-top: 8px; }
+
+        .btn {
+            padding: 6px 14px;
+            border-radius: 3px;
+            border: none;
+            font-size: 13px;
+            cursor: pointer;
+            margin-right: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary { background: var(--gov-green); color: #ffffff; }
+        .btn-primary:hover { background: var(--gov-green-dark); }
+
+        .btn-reset { background: #eceff1; color: #37474f; }
+        .btn-reset:hover { background: #cfd8dc; }
+
+        /* thêm nút phụ cho chế độ sửa */
+        .btn-secondary { background: #fff3e0; color: #8d6e63; border: 1px solid #ffcc80; }
+        .btn-secondary:hover { background: #ffe0b2; }
+
+        .btn-icon { font-size: 14px; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        thead { background: var(--gov-green-dark); color: #ffffff; }
+        th, td { padding: 7px 10px; text-align: left; border-bottom: 1px solid #e0e0e0; }
+        th { text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+
+        tbody tr:nth-child(odd) { background: #ffffff; }
+        tbody tr:nth-child(even) { background: #f5f5f5; }
+        tbody tr:hover { background: #e8f5e9; }
+
+        .tag-gender {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #ffffff;
+        }
+        .tag-gender.male { background: #1976d2; }
+        .tag-gender.female { background: #d81b60; }
+
+        .tag-role {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            background: rgba(249, 168, 37, 0.14);
+            color: #bf7f00;
+            border: 1px solid rgba(249, 168, 37, 0.6);
+        }
+
+        .note-list { font-size: 12px; margin: 4px 0 0 16px; }
+        .note-list li { margin-bottom: 4px; }
+        .footer-note { margin-top: 10px; font-size: 11px; color: #9e9e9e; text-align: right; }
+
+        .stats-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+        .stat-card { flex: 1 1 160px; background: #ffffff; border-radius: 6px; border: 1px solid #e0e0e0; padding: 8px 10px; }
+        .stat-label { font-size: 12px; color: #616161; }
+        .stat-value { font-size: 20px; font-weight: 700; color: var(--gov-green-dark); margin-top: 4px; }
+        .stat-sub { font-size: 11px; color: #9e9e9e; }
+
+        /* nhỏ gọn cho nút trong bảng */
+        .table-actions .btn { padding: 5px 10px; margin-right: 6px; }
+    </style>
+</head>
+<body>
+
+<div class="top-bar"></div>
+
+<div class="page-wrapper">
+    <div class="header-gov">
+        <div class="gov-emblem">VN</div>
+        <div class="gov-title-block">
+            <div class="gov-title-top">Công ty trách nhiệm hữu hạn 1 thành viên</div>
+            <div class="gov-title-main">PHÒNG NỘI VỤ - CÔNG TY TNHH CÔNG NGHỆ ABC</div>
+            <div class="gov-title-sub">Hệ thống quản lý, theo dõi hồ sơ cán bộ, nhân viên</div>
+        </div>
+    </div>
+
+    <div class="system-bar">
+        <div class="system-name">Hệ thống quản lý nhân sự nội bộ</div>
+        <div class="system-user">Người dùng: <span>ADMIN_TEST</span></div>
+    </div>
+
+    <nav class="nav-bar">
+        <ul class="nav-list">
+            <li class="nav-item"><a href="nhansu.html" class="active">Quản lý nhân sự</a></li>
+            <li class="nav-item"><a href="phongban.html">Quản lý phòng ban</a></li>
+            <li class="nav-item"><a href="chamcong.html">Bảng chấm công</a></li>
+            <li class="nav-item"><a href="hosonhanvien.html">Hồ sơ nhân viên</a></li>
+            <li class="nav-item"><a href="ot.html">Làm thêm giờ (OT) </a></li>
+            <li class="nav-item"><a href="admin_it.html">Quản trị hệ thống</a></li>
+        </ul>
+    </nav>
+
+    <div class="content">
+        <div class="section-title">Thống kê nhanh</div>
+        <div class="section-note">
+            Số liệu tổng hợp sơ bộ dựa trên danh sách nhân sự đang được quản lý trên hệ thống.
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">Tổng quan nhân sự</div>
+            <div class="panel-body">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Tổng số nhân sự</div>
+                        <div class="stat-value" id="statTotal">0</div>
+                        <div class="stat-sub">Bao gồm cả hợp đồng và biên chế</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Nhân sự nam</div>
+                        <div class="stat-value" id="statMale">0</div>
+                        <div class="stat-sub">Theo thông tin giới tính khai báo</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Nhân sự nữ</div>
+                        <div class="stat-value" id="statFemale">0</div>
+                        <div class="stat-sub">Bao gồm cả chức danh chuyên môn</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Chưa cập nhật lương</div>
+                        <div class="stat-value" id="statNoSalary">0</div>
+                        <div class="stat-sub">Cần bổ sung thông tin hệ số lương</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">Thông tin nhân sự</div>
+        <div class="section-note">
+            Nhập đầy đủ, chính xác các trường thông tin cơ bản để phục vụ công tác quản lý, theo dõi.
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">Phiếu nhập thông tin nhân sự</div>
+            <div class="panel-body">
+                <div class="form-grid">
+                    <div class="form-row">
+                        <label for="maNv">Mã nhân viên:</label>
+                        <input type="text" id="maNv" name="maNv" placeholder="VD: NV005">
+                    </div>
+                    <div class="form-row">
+                        <label for="hoTen">Họ và tên:</label>
+                        <input type="text" id="hoTen" name="hoTen" placeholder="Nhập họ và tên">
+                    </div>
+                    <div class="form-row">
+                        <label for="chucDanh">Chức danh:</label>
+                        <input type="text" id="chucDanh" name="chucDanh" placeholder="VD: Chuyên viên, Lập trình viên">
+                    </div>
+                    <div class="form-row">
+                        <label for="ngaySinh">Ngày sinh:</label>
+                        <input type="date" id="ngaySinh" name="ngaySinh">
+                    </div>
+                    <div class="form-row">
+                        <label for="gioiTinh">Giới tính:</label>
+                        <select id="gioiTinh" name="gioiTinh">
+                            <option value="">-- Chọn --</option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                            <option value="Khác">Khác</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label for="heSoLuong">Hệ số lương:</label>
+                        <input type="number" step="0.1" id="heSoLuong" name="heSoLuong" placeholder="VD: 3.20">
+                    </div>
+                </div>
+
+                <!-- hidden state: đang sửa nhân viên nào -->
+                <input type="hidden" id="editingId" value="">
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-primary" id="btnSubmit">
+                        <span class="btn-icon">✔</span> Ghi nhận
+                    </button>
+                    <button type="reset" class="btn btn-reset" id="btnReset">
+                        <span class="btn-icon">↺</span> Làm lại
+                    </button>
+
+                    <!-- NÚT HỦY SỬA: chỉ hiện khi đang sửa -->
+                    <button type="button" class="btn btn-secondary" id="btnCancelEdit" style="display:none;">
+                        <span class="btn-icon">⤺</span> Hủy sửa
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">Danh sách nhân sự</div>
+        <div class="section-note">
+            Dữ liệu minh họa phục vụ mục đích thử nghiệm giao diện.
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">Bảng tổng hợp nhân sự</div>
+            <div class="panel-body">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Mã NV</th>
+                        <th>Họ và tên</th>
+                        <th>Chức danh</th>
+                        <th>Ngày sinh</th>
+                        <th>Giới tính</th>
+                        <th>Hệ số lương</th>
+                        <th>Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody id="employeeTableBody">
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: #9e9e9e;">Đang tải dữ liệu...</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer-note">
+            Giao diện mô phỏng phục vụ mục đích học tập, không phải hệ thống chính thức.
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:3000/api';
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadEmployees();
+        loadStatistics();
+
+        document.getElementById('btnSubmit').addEventListener('click', handleSubmit);
+        document.getElementById('btnReset').addEventListener('click', handleReset);
+        document.getElementById('btnCancelEdit').addEventListener('click', cancelEditMode);
+    });
+
+    async function loadEmployees() {
+        try {
+            const response = await fetch(`${API_URL}/employees`);
+            const result = await response.json();
+
+            if (result.success) {
+                displayEmployees(result.data);
+            } else {
+                alert('Lỗi tải dữ liệu');
+            }
+        } catch (error) {
+            console.error('Error loading employees:', error);
+            const tbody = document.getElementById('employeeTableBody');
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #e53935;">Không thể kết nối đến server. Vui lòng khởi động server.</td></tr>';
+        }
+    }
+
+    function displayEmployees(employees) {
+        const tbody = document.getElementById('employeeTableBody');
+
+        if (employees.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #9e9e9e;">Chưa có dữ liệu nhân viên</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = employees.map(emp => `
+            <tr>
+                <td>${emp.maNv || ''}</td>
+                <td>${emp.hoTen || ''}</td>
+                <td><span class="tag-role">${emp.chucDanh || '—'}</span></td>
+                <td>${formatDate(emp.ngaySinh)}</td>
+                <td>${formatGender(emp.gioiTinh)}</td>
+                <td>${emp.heSoLuong || '—'}</td>
+                <td class="table-actions">
+                    <button class="btn btn-secondary" type="button"
+                        onclick="startEditEmployee(${emp.id}, '${escapeQuotes(emp.maNv || '')}', '${escapeQuotes(emp.hoTen || '')}', '${escapeQuotes(emp.chucDanh || '')}', '${escapeQuotes(emp.ngaySinh || '')}', '${escapeQuotes(emp.gioiTinh || '')}', '${escapeQuotes(emp.heSoLuong ?? '')}')">
+                        ✏ Sửa
+                    </button>
+                    <button class="btn btn-reset" type="button"
+                        onclick="deleteEmployee(${emp.id}, '${escapeQuotes(emp.hoTen || '')}', '${escapeQuotes(emp.maNv || '')}')">
+                        🗑 Xóa
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    async function loadStatistics() {
+        try {
+            const response = await fetch(`${API_URL}/statistics`);
+            const result = await response.json();
+
+            if (result.success) {
+                document.getElementById('statTotal').textContent = result.data.total || 0;
+                document.getElementById('statMale').textContent = result.data.male || 0;
+                document.getElementById('statFemale').textContent = result.data.female || 0;
+                document.getElementById('statNoSalary').textContent = result.data.noSalary || 0;
+            }
+        } catch (error) {
+            console.error('Error loading statistics:', error);
+        }
+    }
+
+    // ====== ADD / UPDATE ======
+    async function handleSubmit() {
+        const editingId = document.getElementById('editingId').value;
+
+        const formData = {
+            maNv: document.getElementById('maNv').value.trim(),
+            hoTen: document.getElementById('hoTen').value.trim(),
+            chucDanh: document.getElementById('chucDanh').value.trim(),
+            ngaySinh: document.getElementById('ngaySinh').value,
+            gioiTinh: document.getElementById('gioiTinh').value,
+            heSoLuong: document.getElementById('heSoLuong').value
+        };
+
+        if (!formData.maNv || !formData.hoTen) {
+            alert('Vui lòng nhập Mã nhân viên và Họ tên');
+            return;
+        }
+
+        try {
+            // Nếu đang sửa -> PUT, không sửa -> POST
+            const url = editingId ? `${API_URL}/employees/${editingId}` : `${API_URL}/employees`;
+            const method = editingId ? 'PUT' : 'POST';
+
+            const response = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert(editingId ? 'Cập nhật nhân viên thành công!' : 'Đã thêm nhân viên thành công!');
+                cancelEditMode();     // thoát chế độ sửa + reset form
+                loadEmployees();
+                loadStatistics();
+            } else {
+                alert('Lỗi: ' + (result.error || 'Không xác định'));
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            alert('Không thể kết nối đến server. Vui lòng kiểm tra server đang chạy.');
+        }
+    }
+
+    function handleReset() {
+        // reset form
+        document.getElementById('maNv').value = '';
+        document.getElementById('hoTen').value = '';
+        document.getElementById('chucDanh').value = '';
+        document.getElementById('ngaySinh').value = '';
+        document.getElementById('gioiTinh').value = '';
+        document.getElementById('heSoLuong').value = '';
+    }
+
+    // ====== EDIT MODE ======
+    function startEditEmployee(id, maNv, hoTen, chucDanh, ngaySinh, gioiTinh, heSoLuong) {
+        document.getElementById('editingId').value = id;
+
+        document.getElementById('maNv').value = maNv || '';
+        document.getElementById('hoTen').value = hoTen || '';
+        document.getElementById('chucDanh').value = chucDanh || '';
+        document.getElementById('ngaySinh').value = ngaySinh || '';
+        document.getElementById('gioiTinh').value = gioiTinh || '';
+        document.getElementById('heSoLuong').value = (heSoLuong === 'null' || heSoLuong === 'undefined') ? '' : (heSoLuong ?? '');
+
+        // đổi text nút submit + hiện nút hủy
+        document.getElementById('btnSubmit').innerHTML = '<span class="btn-icon">💾</span> Cập nhật';
+        document.getElementById('btnCancelEdit').style.display = 'inline-flex';
+
+        // kéo lên form cho dễ nhìn
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function cancelEditMode() {
+        document.getElementById('editingId').value = '';
+        handleReset();
+
+        document.getElementById('btnSubmit').innerHTML = '<span class="btn-icon">✔</span> Ghi nhận';
+        document.getElementById('btnCancelEdit').style.display = 'none';
+    }
+
+    // ====== DELETE ======
+    async function deleteEmployee(id, hoTen, maNv) {
+        const ok = confirm(`Bạn có chắc muốn xóa nhân viên:\n- Mã: ${maNv}\n- Tên: ${hoTen}\n\nHành động này sẽ xóa khỏi database!`);
+        if (!ok) return;
+
+        try {
+            const res = await fetch(`${API_URL}/employees/${id}`, { method: 'DELETE' });
+            const result = await res.json();
+
+            if (result.success) {
+                alert('Đã xóa nhân viên thành công!');
+                // nếu đang sửa đúng người vừa xóa -> thoát chế độ sửa
+                const editingId = document.getElementById('editingId').value;
+                if (editingId && String(editingId) === String(id)) cancelEditMode();
+
+                loadEmployees();
+                loadStatistics();
+            } else {
+                alert('Lỗi: ' + (result.error || 'Không xác định'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Không thể kết nối server để xóa. Hãy kiểm tra server đang chạy.');
+        }
+    }
+
+    // ====== HELPERS ======
+    function escapeQuotes(str) {
+        return String(str).replace(/'/g, "\\'").replace(/"/g, '\\"');
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '—';
+        const date = new Date(dateStr);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+
+    function formatGender(gender) {
+        if (!gender) return '—';
+        if (gender === 'Nam') return '<span class="tag-gender male">Nam</span>';
+        if (gender === 'Nữ') return '<span class="tag-gender female">Nữ</span>';
+        return gender;
+    }
+</script>
+
+</body>
+</html>
